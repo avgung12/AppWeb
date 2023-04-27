@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<script>
+function sortTable() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementsByTagName("table")[0];
+    switching = true;
+    while (switching) {
+      switching = false;
+      rows = table.getElementsByTagName("tr");
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        var sortOption = document.getElementById("sort-dropdown").value;
+        if (sortOption == "Department") {
+          x = rows[i].getElementsByTagName("td")[5];
+          y = rows[i + 1].getElementsByTagName("td")[5];
+        } else if (sortOption == "Name") {
+          x = rows[i].getElementsByTagName("td")[0];
+          y = rows[i + 1].getElementsByTagName("td")[0];
+        } else if (sortOption == "office") {
+          x = rows[i].getElementsByTagName("td")[3];
+          y = rows[i + 1].getElementsByTagName("td")[3];
+        }
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch= true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+</script>
+
+
+
+<h1>Search Results</h1>
+
+<div id="pagination-links"></div>
+
+
+<p>Query: {{ query }}</p>
+<p>Search By: {{ search_by }}</p>
+
+<label for="sort-dropdown">Sort by:</label>
+<select id="sort-dropdown" onchange="sortTable()">
+<option value="department">Department</option>
+<option value="Name">Name</option>
+<option value="office">Office</option>
+</select>
+
+
+
+<label for="department-filter">Filter by Department:</label>
+<select id="department-filter">
+  <option value="">All</option>
+  <option value="English">English</option>
+  <option value="security">Security</option>
+  <option value="Infra">Infrastructure</option>
+  <option value="accounting">Accounting</option>
+  <option value="planning department">Planning Department</option>
+  <option value="Network">Network</option>
+  <option value="Network Team">Network Team</option>
+  <option value="patrol">Patrol</option>
+</select>
+
+<table>
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Phone</th>
+      <th>Office</th>
+      <th>Email Address</th>
+      <th>Department</th>
+      <th>Division</th>
+      <th>Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for result in results %}
+    <tr class="table-row" data-department="{{ result[5] }}">
+      <td>{{ result[0] }} {{ result[1] }}</td>
+      <td>{{ result[2] }}</td>
+      <td>{{ result[3] }}</td>
+      <td>{{ result[4] }}</td>
+      <td>{{ result[5] }}</td>
+      <td>{{ result[6] }}</td>
+      <td>{{ result[7] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+  const departmentFilter = document.querySelector('#department-filter');
+  const tableRows = document.querySelectorAll('.table-row');
+
+  departmentFilter.addEventListener('change', () => {
+    const selectedDepartment = departmentFilter.value;
+
+    tableRows.forEach((row) => {
+      if (selectedDepartment === '' || row.dataset.department === selectedDepartment) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+<script>
+    const tableRows = document.querySelectorAll('.table-row');
+    const pageSize = 10;
+    let currentPage = 1;
+    
+    function paginate() {
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      tableRows.forEach((row, index) => {
+        if (index >= startIndex && index < endIndex) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    
+      const totalPages = Math.ceil(tableRows.length / pageSize);
+      let paginationLinks = '';
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === currentPage) {
+          paginationLinks += `<span>${i}</span>`;
+        } else {
+          paginationLinks += `<a href="#" onclick="changePage(${i})">${i}</a>`;
+        }
+      }
+      document.querySelector('#pagination-links').innerHTML = paginationLinks;
+    }
+    
+    function changePage(page) {
+      currentPage = page;
+      paginate();
+    }
+    
+    paginate();
+
+</script>
+
+
+</body>
+</html>

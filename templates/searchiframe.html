@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MY</title>
+	<style>
+		#search-form {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100px;
+			z-index: 1;
+			background-color: white;
+			padding: 2px;
+			border-bottom: 1px solid black;
+		}
+		
+		iframe {
+			width: 100%;
+			height: calc(100vh - 220px);
+			border: none;
+			margin-top: 100px;
+		}
+	</style>
+</head>
+<body>
+	<div id="search-form">
+        <h1>MY Phone Directory</h1>
+        <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
+          <input type="text" name="query" placeholder=" " value=" " style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
+          <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">
+            <option value="AllFields">All Fields</option>
+            <option value="FirstName">First Name</option>
+            <option value="LastName">Last Name</option>
+            <option value="Phone">Phone</option>
+            <option value="Office">Office</option>
+            <option value="EmailAddress">Email Address</option>
+            <option value="Departement">Department</option>
+            <option value="Title">Title</option>
+            <option value="Division">Division</option>
+          </select>
+          <input type="submit" value="Search" style="height: 30px;">
+        </form>
+      </div>
+      
+      <iframe name="search_results_iframe" id="search_results_iframe" src="{{ url_for('search_results') }}" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+      
+      <script type="text/javascript">
+        function submitForm() {
+          var form = document.getElementById("search-form");
+          var iframe = document.getElementById("search_results_iframe");
+          iframe.src = "{{ url_for('search_results') }}";
+          return false; // prevent the form from submitting normally
+        }
+      </script>
+    </body>
+</html>
