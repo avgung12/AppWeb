@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
     <title>Search Results</title>
     <style>
         table {
@@ -19,47 +22,48 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+
+        .dataTables_paginate {
+          margin-top: 10px;
+        }
+        
+        .dataTables_paginate .paginate_button {
+          display: inline-block;
+          padding: 5px 10px;
+          border: 1px solid #ccc;
+          margin-right: 5px;
+          font-size: 14px;
+          color: #333;
+          background-color: #fff;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+        }
+        
+        .dataTables_paginate .paginate_button:hover {
+          color: #fff;
+          background-color: #333;
+        }
+        
+        .dataTables_paginate .paginate_button.disabled {
+          opacity: 0.5;
+          cursor: default;
+        }
+        
+        .dataTables_paginate .paginate_button.current {
+          font-weight: bold;
+          color: #fff;
+          background-color: #333;
+        }
     </style>
 </head>
 <body>
 
-  <script>
-    function sortTable() {
-      var table, rows, switching, i, x, y, shouldSwitch;
-      table = document.getElementsByTagName("table")[0];
-      switching = true;
-      while (switching) {
-        switching = false;
-        rows = table.getElementsByTagName("tr");
-        for (i = 1; i < (rows.length - 1); i++) {
-          shouldSwitch = false;
-          var sortOption = document.getElementById("sort-dropdown").value;
-          if (sortOption == "department") {
-            x = rows[i].getElementsByTagName("td")[5];
-            y = rows[i + 1].getElementsByTagName("td")[5];
-          } else if (sortOption == "first-name") {
-            x = rows[i].getElementsByTagName("td")[0];
-            y = rows[i + 1].getElementsByTagName("td")[0];
-          } else if (sortOption == "office") {
-            x = rows[i].getElementsByTagName("td")[3];
-            y = rows[i + 1].getElementsByTagName("td")[3];
-          }
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            shouldSwitch= true;
-            break;
-          }
-        }
-        if (shouldSwitch) {
-          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true;
-        }
-      }
-    }
-    </script>
-
 <h1>Search Results</h1>
 <p>Query: {{ query }}</p>
 <p>Search By: {{ search_by }}</p>
+
+<div id="pagination-links"></div>
 
 <label for="sort-dropdown">Sort by:</label>
 <select id="sort-dropdown" onchange="sortTable()">
@@ -82,7 +86,7 @@
   <option value="patrol">Patrol</option>
 </select>
 
-<table>
+<table id="results-table">
     <thead>
         <tr>
             <th>First Name</th>
@@ -110,6 +114,68 @@
         {% endfor %}
     </tbody>
 </table>
+
+
+<div id="pagination-links"></div>
+
+<script>
+  $(document).ready( function () {
+    $('#results-table').DataTable({
+        paging: true,
+        pageLength: 10,
+        dom: '<"top"p>rt<"bottom"p><"clear">',
+        columnDefs: [
+            { targets: 5, type: 'string' }
+        ]
+    });
+});
+
+departmentFilter.addEventListener('change', () => {
+  const selectedDepartment = departmentFilter.value;
+
+  // Apply department filter to DataTable
+  $('#results-table').DataTable().column(5).search(selectedDepartment).draw();
+
+  // Reindex table
+  $('#results-table').DataTable().rows().invalidate('data').draw();
+});
+</script>
+
+
+
+<script>
+  function sortTable() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementsByTagName("table")[0];
+    switching = true;
+    while (switching) {
+      switching = false;
+      rows = table.getElementsByTagName("tr");
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        var sortOption = document.getElementById("sort-dropdown").value;
+        if (sortOption == "department") {
+          x = rows[i].getElementsByTagName("td")[5];
+          y = rows[i + 1].getElementsByTagName("td")[5];
+        } else if (sortOption == "first-name") {
+          x = rows[i].getElementsByTagName("td")[0];
+          y = rows[i + 1].getElementsByTagName("td")[0];
+        } else if (sortOption == "office") {
+          x = rows[i].getElementsByTagName("td")[3];
+          y = rows[i + 1].getElementsByTagName("td")[3];
+        }
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch= true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+  </script>
 
 
 <script>
