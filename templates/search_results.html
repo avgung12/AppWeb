@@ -55,6 +55,10 @@
           color: #fff;
           background-color: #333;
         }
+
+        .dataTables_filter {
+          display: none;
+        }
     </style>
 </head>
 <body>
@@ -76,14 +80,6 @@
 <label for="department-filter">Filter by Department:</label>
 <select id="department-filter">
   <option value="">All</option>
-  <option value="English">English</option>
-  <option value="security">Security</option>
-  <option value="Infra">Infrastructure</option>
-  <option value="accounting">Accounting</option>
-  <option value="planning department">Planning Department</option>
-  <option value="Network">Network</option>
-  <option value="Network Team">Network Team</option>
-  <option value="patrol">Patrol</option>
 </select>
 
 <table id="results-table">
@@ -119,26 +115,74 @@
 <div id="pagination-links"></div>
 
 <script>
-  $(document).ready( function () {
-    $('#results-table').DataTable({
-        paging: true,
-        pageLength: 10,
-        dom: '<"top"p>rt<"bottom"p><"clear">',
-        columnDefs: [
-            { targets: 5, type: 'string' }
-        ]
+  $(document).ready(function() {
+    var table = $('#results-table').DataTable({
+      "paging": true,
+      "ordering": true,
+      "info": false,
+      "order": [[5, 'asc']],
+      "columnDefs": [
+        {
+          "targets": [5],
+          "visible": false,
+          "searchable": true
+        },
+        {
+          "targets": [0],
+          "render": function(data, type, row) {
+            var email = row[4];
+            var username = email.substring(0, email.indexOf("@"));
+            var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
+            return '<img src="' + imgUrl + '" alt="Profile Picture" width="50">' +
+                   '<span>' + data + '</span>';
+          }
+        }
+      ]
     });
-});
-
-departmentFilter.addEventListener('change', () => {
-  const selectedDepartment = departmentFilter.value;
-
-  // Apply department filter to DataTable
-  $('#results-table').DataTable().column(5).search(selectedDepartment).draw();
-
-  // Reindex table
-  $('#results-table').DataTable().rows().invalidate('data').draw();
-});
+    
+    $('#department-filter').on('change', function() {
+      table.column(5).search(this.value).draw();
+      table.page('first').draw('page');
+    });
+    
+    $('#results-table tbody').on('click', 'tr', function() {
+      var row = table.row(this);
+    
+      // Check if the child row is already displayed
+      if (row.child.isShown()) {
+        row.child.hide();
+        $(this).removeClass('shown');
+      } else {
+        // Display the child row
+        var data = row.data();
+        var childRow = format(data); // format the data using the format function
+        row.child(childRow).show(); // pass the formatted data to the child row
+        $(this).addClass('shown');
+      }
+    });
+    
+    function format(d) {
+      var email = d[4];
+      var username = email.substring(0, email.indexOf("@"));
+      var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg"; // replace with your image URL
+      return '<div class="row">' +
+        '<div class="col-md-2">' +
+          '<img src="' + imgUrl + '" alt="Profile Picture" width="100">' + // add the image element
+        '</div>' +
+        '<div class="col-md-10">' +
+          '<p><strong>First Name:</strong> '+d[0]+'</p>'+
+          '<p><strong>Last Name:</strong> '+d[1]+'</p>'+
+          '<p><strong>Phone:</strong> '+d[2]+'</p>'+
+          '<p><strong>Office:</strong> '+d[3]+'</p>'+
+          '<p><strong>Email:</strong> '+d[4]+'</p>'+
+          '<p><strong>Department:</strong> '+d[5]+'</p>'+
+          '<p><strong>Division:</strong> '+d[6]+'</p>'+
+          '<p><strong>Title:</strong> '+d[7]+'</p>'+
+        '</div>' +
+      '</div>';
+    }
+  });
+  
 </script>
 
 
@@ -175,25 +219,35 @@ departmentFilter.addEventListener('change', () => {
       }
     }
   }
-  </script>
 
 
-<script>
-  const departmentFilter = document.querySelector('#department-filter');
-  const tableRows = document.querySelectorAll('.table-row');
-
-  departmentFilter.addEventListener('change', () => {
-    const selectedDepartment = departmentFilter.value;
-
-    tableRows.forEach((row) => {
-      if (selectedDepartment === '' || row.dataset.department === selectedDepartment) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
+function populateDepartmentFilter() {
+  var departmentFilter = document.getElementById("department-filter");
+  var departmentValues = [];
+  
+  // Get the distinct department values from the table
+  var table = $('#results-table').DataTable();
+  var data = table.column(5).data();
+  data.each(function (value, index) {
+    if (!departmentValues.includes(value)) {
+      departmentValues.push(value);
+    }
   });
-</script>
+
+  // Add the distinct department values to the department-filter select element
+  for (var i = 0; i < departmentValues.length; i++) {
+    var option = document.createElement("option");
+    option.value = departmentValues[i];
+    option.text = departmentValues[i];
+    departmentFilter.appendChild(option);
+  }
+}
+
+populateDepartmentFilter();
+
+
+
+  </script>
 
 
 </body>
