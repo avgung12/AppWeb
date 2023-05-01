@@ -121,21 +121,9 @@
       "ordering": true,
       "info": false,
       "order": [[5, 'asc']],
-      "columnDefs": [
-        {
-          "targets": [5],
+      "columnDefs": [      {        "targets": [5],
           "visible": false,
           "searchable": true
-        },
-        {
-          "targets": [0],
-          "render": function(data, type, row) {
-            var email = row[4];
-            var username = email.substring(0, email.indexOf("@"));
-            var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
-            return '<img src="' + imgUrl + '" alt="Profile Picture" width="50">' +
-                   '<span>' + data + '</span>';
-          }
         }
       ]
     });
