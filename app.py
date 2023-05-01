@@ -51,7 +51,8 @@ def search_results():
 
     elif search_by=="AllFields":
 
-        mySQL=f"SELECT * from dbo.Persons where firstname=\'{query}\' or lastname=\'{query}\' or phone=\'{query}\' or office=\'{query}\' or emailaddress=\'{query}\' or Departement=\'{query}\' or division=\'{query}\' or title=\'{query}\'"    
+        mySQL=f"SELECT * from dbo.Persons where firstname=\'{query}\' or lastname=\'{query}\' or phone=\'{query}\' or office=\'{query}\' or emailaddress=\'{query}\' or Departement=\'{query}\' or division=\'{query}\' or title=\'{query}\'" 
+           
 
     else:
 

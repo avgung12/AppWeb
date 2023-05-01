@@ -59,6 +59,31 @@
         .dataTables_filter {
           display: none;
         }
+
+        .employee-details {
+          display: flex;
+          align-items: center;
+          border: 3px solid #ccc;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+        
+        .profile-image {
+          margin-right: 20px;
+        }
+        
+        .profile-image img {
+          border-radius: 50%;
+        }
+        
+        .details p {
+          margin: 25px 0;
+        }
+        
+        .details strong {
+          margin-right: 50px;
+        }
+
     </style>
 </head>
 <body>
@@ -74,6 +99,7 @@
   <option value="department">Department</option>
   <option value="first-name">First Name</option>
   <option value="office">Office</option>
+  <option value="division">Division</option>
 </select>
 
 
@@ -153,11 +179,13 @@
       var email = d[4];
       var username = email.substring(0, email.indexOf("@"));
       var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg"; // replace with your image URL
-      return '<div class="row">' +
-        '<div class="col-md-2">' +
+    
+      // Wrap the returned HTML in a parent container div with a class
+      return '<div class="employee-details">' +
+        '<div class="profile-image">' +
           '<img src="' + imgUrl + '" alt="Profile Picture" width="100">' + // add the image element
         '</div>' +
-        '<div class="col-md-10">' +
+        '<div class="details">' +
           '<p><strong>First Name:</strong> '+d[0]+'</p>'+
           '<p><strong>Last Name:</strong> '+d[1]+'</p>'+
           '<p><strong>Phone:</strong> '+d[2]+'</p>'+
@@ -176,35 +204,30 @@
 
 
 <script>
+
   function sortTable() {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementsByTagName("table")[0];
-    switching = true;
-    while (switching) {
-      switching = false;
-      rows = table.getElementsByTagName("tr");
-      for (i = 1; i < (rows.length - 1); i++) {
-        shouldSwitch = false;
-        var sortOption = document.getElementById("sort-dropdown").value;
-        if (sortOption == "department") {
-          x = rows[i].getElementsByTagName("td")[5];
-          y = rows[i + 1].getElementsByTagName("td")[5];
-        } else if (sortOption == "first-name") {
-          x = rows[i].getElementsByTagName("td")[0];
-          y = rows[i + 1].getElementsByTagName("td")[0];
-        } else if (sortOption == "office") {
-          x = rows[i].getElementsByTagName("td")[3];
-          y = rows[i + 1].getElementsByTagName("td")[3];
-        }
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          shouldSwitch= true;
-          break;
-        }
-      }
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-      }
+    var sortValue = $('#sort-dropdown').val();
+    var columnIdx = -1;
+    
+    switch (sortValue) {
+      case "division":
+        columnIdx = 6;
+        break;
+      case "department":
+        columnIdx = 5;
+        break;
+      case "first-name":
+        columnIdx = 0;
+        break;
+      case "office":
+        columnIdx = 3;
+        break;
+      default:
+        columnIdx = -1;
+    }
+    
+    if (columnIdx >= 0) {
+      $('#results-table').DataTable().order([columnIdx, 'asc']).draw();
     }
   }
 
