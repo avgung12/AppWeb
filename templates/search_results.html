@@ -108,9 +108,10 @@
   <option value="">All</option>
 </select>
 
-<table id="results-table">
+<table id="results-table" class = "display">
     <thead>
         <tr>
+            <th>Profile</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Phone</th>
@@ -124,6 +125,7 @@
     <tbody>
         {% for result in results %}
         <tr class="table-row" data-department="{{ result[5] }}">
+          <td><img src="https://testwebdbphotos.blob.core.windows.net/pics/{{ result[4].split('@')[0] }}.jpg" width="75" height="75"></td>
                 <td>{{ result[0] }}</td>
                 <td>{{ result[1] }}</td>
                 <td>{{ result[2] }}</td>
@@ -176,24 +178,27 @@
     });
     
     function format(d) {
-      var email = d[4];
+      var email = d[5];
       var username = email.substring(0, email.indexOf("@"));
       var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg"; // replace with your image URL
+    
+      // add the image element to the row
+      var imgElement = '<img src="' + imgUrl + '" alt="Profile Picture" width="100">';
     
       // Wrap the returned HTML in a parent container div with a class
       return '<div class="employee-details">' +
         '<div class="profile-image">' +
-          '<img src="' + imgUrl + '" alt="Profile Picture" width="100">' + // add the image element
+          imgElement +
         '</div>' +
         '<div class="details">' +
-          '<p><strong>First Name:</strong> '+d[0]+'</p>'+
-          '<p><strong>Last Name:</strong> '+d[1]+'</p>'+
-          '<p><strong>Phone:</strong> '+d[2]+'</p>'+
-          '<p><strong>Office:</strong> '+d[3]+'</p>'+
-          '<p><strong>Email:</strong> '+d[4]+'</p>'+
-          '<p><strong>Department:</strong> '+d[5]+'</p>'+
-          '<p><strong>Division:</strong> '+d[6]+'</p>'+
-          '<p><strong>Title:</strong> '+d[7]+'</p>'+
+          '<p><strong>First Name:</strong> '+d[1]+'</p>'+
+          '<p><strong>Last Name:</strong> '+d[2]+'</p>'+
+          '<p><strong>Phone:</strong> '+d[3]+'</p>'+
+          '<p><strong>Office:</strong> '+d[4]+'</p>'+
+          '<p><strong>Email:</strong> '+d[5]+'</p>'+
+          '<p><strong>Department:</strong> '+d[6]+'</p>'+
+          '<p><strong>Division:</strong> '+d[7]+'</p>'+
+          '<p><strong>Title:</strong> '+d[8]+'</p>'+
         '</div>' +
       '</div>';
     }
@@ -256,9 +261,9 @@ function populateDepartmentFilter() {
 
 populateDepartmentFilter();
 
-
-
   </script>
+
+<script src="add-profile-images.js"></script>
 
 
 </body>
