@@ -22,12 +22,9 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-
-
         .dataTables_paginate {
           margin-top: 10px;
         }
-        
         .dataTables_paginate .paginate_button {
           display: inline-block;
           padding: 5px 10px;
@@ -39,7 +36,6 @@
           cursor: pointer;
           transition: all 0.2s ease-in-out;
         }
-        
         .dataTables_paginate .paginate_button:hover {
           color: #fff;
           background-color: #333;
@@ -89,19 +85,16 @@
 <body>
 
 <h1>Search Results</h1>
-<p>Query: {{ query }}</p>
-<p>Search By: {{ search_by }}</p>
 
 <div id="pagination-links"></div>
 
 <label for="sort-dropdown">Sort by:</label>
 <select id="sort-dropdown" onchange="sortTable()">
-  <option value="department">Department</option>
   <option value="first-name">First Name</option>
   <option value="office">Office</option>
+  <option value="department">Department</option>
   <option value="division">Division</option>
 </select>
-
 
 <label for="department-filter">Filter by Department:</label>
 <select id="department-filter">
@@ -125,7 +118,12 @@
     <tbody>
         {% for result in results %}
         <tr class="table-row" data-department="{{ result[5] }}">
-          <td><img src="https://testwebdbphotos.blob.core.windows.net/pics/{{ result[4].split('@')[0] }}.jpg" width="75" height="75"></td>
+          {% if result[4] %}
+            {% set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/' + result[4].split('@')[0] + '.jpg' %}
+            <td><img src={{img_url}} width="30" height="30"></td>
+          {% else %}
+          <td style="width:30px; height:30px"></td>
+          {% endif %}    
                 <td>{{ result[0] }}</td>
                 <td>{{ result[1] }}</td>
                 <td>{{ result[2] }}</td>
@@ -139,7 +137,6 @@
     </tbody>
 </table>
 
-
 <div id="pagination-links"></div>
 
 <script>
@@ -148,8 +145,8 @@
       "paging": true,
       "ordering": true,
       "info": false,
-      "order": [[5, 'asc']],
-      "columnDefs": [      {        "targets": [5],
+      "order": [[6, 'asc']],
+      "columnDefs": [      {        "targets": [6],
           "visible": false,
           "searchable": true
         }
@@ -157,7 +154,7 @@
     });
     
     $('#department-filter').on('change', function() {
-      table.column(5).search(this.value).draw();
+      table.column(6).search(this.value).draw();
       table.page('first').draw('page');
     });
     
@@ -206,8 +203,6 @@
   
 </script>
 
-
-
 <script>
 
   function sortTable() {
@@ -216,37 +211,36 @@
     
     switch (sortValue) {
       case "division":
-        columnIdx = 6;
+        columnIdx = 7;
         break;
       case "department":
-        columnIdx = 5;
+        columnIdx = 6;
         break;
       case "first-name":
-        columnIdx = 0;
+        columnIdx = 1;
         break;
       case "office":
-        columnIdx = 3;
+        columnIdx = 4;
         break;
       default:
-        columnIdx = -1;
+        columnIdx = 1;
     }
-    
-    if (columnIdx >= 0) {
+    if (columnIdx >= 1) {
       $('#results-table').DataTable().order([columnIdx, 'asc']).draw();
     }
   }
 
-
-function populateDepartmentFilter() {
+ function populateDepartmentFilter() {
   var departmentFilter = document.getElementById("department-filter");
   var departmentValues = [];
-  
+
   // Get the distinct department values from the table
   var table = $('#results-table').DataTable();
-  var data = table.column(5).data();
+  var data = table.column(6).data();
   data.each(function (value, index) {
-    if (!departmentValues.includes(value)) {
-      departmentValues.push(value);
+    var cleanedValue = value.replace(/&amp;/g, ' & '); // replace both "&" and "amp;" with the appropriate symbol
+    if (!departmentValues.includes(cleanedValue)) {
+      departmentValues.push(cleanedValue);
     }
   });
 
@@ -254,17 +248,14 @@ function populateDepartmentFilter() {
   for (var i = 0; i < departmentValues.length; i++) {
     var option = document.createElement("option");
     option.value = departmentValues[i];
-    option.text = departmentValues[i];
+    var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
+    option.appendChild(optionText);
     departmentFilter.appendChild(option);
   }
 }
 
 populateDepartmentFilter();
-
-  </script>
-
-<script src="add-profile-images.js"></script>
-
+</script>
 
 </body>
 </html>
