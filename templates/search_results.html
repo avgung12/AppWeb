@@ -22,6 +22,12 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
+        table, th, td {
+          border: none;
+          border-collapse: collapse;
+        }
+
         .dataTables_paginate {
           margin-top: 10px;
         }
@@ -92,6 +98,10 @@
           display: none;
         }
 
+        .table-format{
+          border: none;
+        }
+
       select {
           height: 30px;
           width: 150px;
@@ -138,10 +148,24 @@
         <tr class="table-row" data-department="{{ result[6] }}">
           {% if result[5] %}
             {% set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/' + result[5].split('@')[0] + '.jpg' %}
-            <td><img src={{img_url}} width="30" height="30"></td>
-          {% else %}
-          <td style="width:30px; height:30px"></td>
-          {% endif %}    
+            <td>
+              <img src="{{ img_url }}" width="30" height="30" onerror="this.onerror=null;this.src='';">
+            <script>
+                var img = new Image();
+                img.onload = function() {
+                var td = document.querySelector('tr[data-department="{{ result[6] }}"] td:nth-child(1)');
+                td.innerHTML = '<img src=\"{{ img_url }}\" width=\"30\" height=\"30\">';
+              };
+              img.onerror = function() {
+                var td = document.querySelector('tr[data-department="{{ result[6] }}"] td:nth-child(1)');
+                td.innerHTML = '';
+              };
+              img.src = '{{ img_url }}';
+            </script>
+          </td>
+        {% else %}
+        <td style="width:30px; height:30px"></td>
+        {% endif %}    
                 <td>{{ result[0] }}</td>
                 <td class="hidden">{{ result[1] }}</td> 
                 <td class="hidden">{{ result[2] }}</td>
@@ -177,6 +201,11 @@
       table.page('first').draw('page');
     });
     
+    $('#page-length').on('change', function() {
+      var newLength = $(this).val();
+      table.page.len(newLength).draw();
+    });
+
     $('#results-table tbody').on('click', 'tr', function() {
       var row = table.row(this);
     
@@ -202,22 +231,24 @@
       var imgElement = '<img src="' + imgUrl + '" alt="Profile Picture" width="100">';
     
       // Wrap the returned HTML in a parent container div with a class
-      return '<div class="employee-details">' +
-        '<div class="profile-image">' +
-          imgElement +
-        '</div>' +
-        '<div class="details">' +
-          '<p><strong>Display Name:</strong> '+d[1]+'</p>'+
-          '<p><strong>First Name:</strong> '+d[2]+'</p>'+
-          '<p><strong>Last Name:</strong> '+d[3]+'</p>'+
-          '<p><strong>Phone:</strong> '+d[4]+'</p>'+
-          '<p><strong>Title:</strong> '+d[5]+'</p>'+
-          '<p><strong>Office:</strong> '+d[6]+'</p>'+
-          '<p><strong>Email Address:</strong> '+d[7]+'</p>'+
-          '<p><strong>Department:</strong> '+d[8]+'</p>'+
-          '<p><strong>Division:</strong> '+d[9]+'</p>'+
-        '</div>' +
-      '</div>';
+    return '<div class="employee-details">' +
+      '<div class="profile-image">' +
+        imgElement +
+      '</div>' +
+      '<div class="table-format">' +
+        '<table>' +
+          '<tr><td><strong>Display Name:</strong></td><td>'+d[1]+'</td></tr>'+
+          '<tr><td><strong>First Name:</strong></td><td>'+d[2]+'</td></tr>'+
+          '<tr><td><strong>Last Name:</strong></td><td>'+d[3]+'</td></tr>'+
+          '<tr><td><strong>Phone:</strong></td><td>'+d[4]+'</td></tr>'+
+          '<tr><td><strong>Title:</strong></td><td>'+d[5]+'</td></tr>'+
+          '<tr><td><strong>Office:</strong></td><td>'+d[6]+'</td></tr>'+
+          '<tr><td><strong>Email Address:</strong></td><td>'+d[7]+'</td></tr>'+
+          '<tr><td><strong>Department:</strong></td><td>'+d[8]+'</td></tr>'+
+          '<tr><td><strong>Division:</strong></td><td>'+d[9]+'</td></tr>'+
+        '</table>' +
+      '</div>' +
+    '</div>';
     }
   });
   
