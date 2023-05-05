@@ -3,21 +3,38 @@
 <head>
 	<title>MY</title>
 	<style>
-		#search-form {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100px;
-			z-index: 1;
-			background-color: white;
-			padding: 2px;
-			border-bottom: 1px solid black;
-		}
+    #search-form {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    #search-form form {
+      display: inline-block;
+      margin-top: 30px;
+    }
+    
+    #search-form input[type="text"],
+    #search-form select,
+    #search-form input[type="submit"] {
+      display: inline-block;
+
+      margin: 0 10px;
+    }
+    
+    #search-form input[type="text"],
+    #search-form select {
+      width: 300px;
+      line-height: 1.5;
+      height: 25px;
+    }
+    
+    #search-form input[type="submit"] {
+      height: 50px;
+    }
 		
 		iframe {
 			width: 100%;
-			height: calc(100vh - 220px);
+			height: calc(140vh - 250px);
 			border: none;
 			margin-top: 100px;
 		}
@@ -25,7 +42,6 @@
 </head>
 <body>
 	<div id="search-form">
-        <h1>MY Phone Directory</h1>
         <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
           <input type="text" name="query" placeholder=" " value=" " style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
           <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">

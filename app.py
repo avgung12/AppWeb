@@ -30,12 +30,13 @@ def search_results():
         query=""
     conn = connection()
     cursor = conn.cursor()
+    table = "Employees"
     if query == "*" or len(query)==0:
-        mySQL=f"SELECT * from dbo.Persons"  
+        mySQL=f"SELECT * from dbo.ITSTAFF"  
     elif search_by=="AllFields":
-        mySQL=f"SELECT * from dbo.Persons where firstname=\'{query}\' or lastname=\'{query}\' or phone=\'{query}\' or office=\'{query}\' or emailaddress=\'{query}\' or Departement=\'{query}\' or division=\'{query}\' or title=\'{query}\'" 
+        mySQL=f"SELECT * from dbo.ITSTAFF where firstname=\'{query}\' or lastname=\'{query}\' or phone=\'{query}\' or office=\'{query}\' or emailaddress=\'{query}\' or Departement=\'{query}\' or division=\'{query}\' or title=\'{query}\'" 
     else:
-        mySQL=f"SELECT * from dbo.Persons where {search_by}=\'{query}\'"
+        mySQL=f"SELECT * from dbo.ITSTAFF where {search_by}=\'{query}\'"
     cursor.execute(mySQL)
     results = cursor.fetchall()
     return render_template('search_results.html', results=results,query=query,search_by=search_by)

@@ -56,6 +56,14 @@
           display: none;
         }
 
+        .dataTables_length {
+          position: absolute;
+          right: 0;
+          top: -37px;
+          margin-right: 10px;
+          display: inline-block;
+        }
+
         .employee-details {
           display: flex;
           align-items: center;
@@ -80,17 +88,25 @@
           margin-right: 50px;
         }
 
+        .hidden {
+          display: none;
+        }
+
+      select {
+          height: 30px;
+          width: 150px;
+          top: -20px;
+        }
+
     </style>
 </head>
 <body>
-
-<h1>Search Results</h1>
 
 <div id="pagination-links"></div>
 
 <label for="sort-dropdown">Sort by:</label>
 <select id="sort-dropdown" onchange="sortTable()">
-  <option value="first-name">First Name</option>
+  <option value="first-name">Name</option>
   <option value="office">Office</option>
   <option value="department">Department</option>
   <option value="division">Division</option>
@@ -105,33 +121,36 @@
     <thead>
         <tr>
             <th>Profile</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Name</th>
+            <th class="hidden">First Name</th>
+            <th class="hidden">Last Name</th>
             <th>Phone</th>
+            <th>Title</th>
             <th>Office</th>
             <th>Email Address</th>
             <th>Department</th>
             <th>Division</th>
-            <th>Title</th>
         </tr>
     </thead>
     <tbody>
+      <!--results[]0:name 1:FirstName,2:LastName,3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
         {% for result in results %}
-        <tr class="table-row" data-department="{{ result[5] }}">
-          {% if result[4] %}
-            {% set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/' + result[4].split('@')[0] + '.jpg' %}
+        <tr class="table-row" data-department="{{ result[6] }}">
+          {% if result[5] %}
+            {% set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/' + result[5].split('@')[0] + '.jpg' %}
             <td><img src={{img_url}} width="30" height="30"></td>
           {% else %}
           <td style="width:30px; height:30px"></td>
           {% endif %}    
                 <td>{{ result[0] }}</td>
-                <td>{{ result[1] }}</td>
-                <td>{{ result[2] }}</td>
+                <td class="hidden">{{ result[1] }}</td> 
+                <td class="hidden">{{ result[2] }}</td>
                 <td>{{ result[3] }}</td>
+                <td>{{ result[7] }}</td>
                 <td>{{ result[4] }}</td>
                 <td>{{ result[5] }}</td>
                 <td>{{ result[6] }}</td>
-                <td>{{ result[7] }}</td>
+                <td>{{ result[8] }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -145,8 +164,8 @@
       "paging": true,
       "ordering": true,
       "info": false,
-      "order": [[6, 'asc']],
-      "columnDefs": [      {        "targets": [6],
+      "order": [[8, 'asc']],
+      "columnDefs": [      {        "targets": [8],
           "visible": false,
           "searchable": true
         }
@@ -154,7 +173,7 @@
     });
     
     $('#department-filter').on('change', function() {
-      table.column(6).search(this.value).draw();
+      table.column(8).search(this.value).draw();
       table.page('first').draw('page');
     });
     
@@ -175,7 +194,7 @@
     });
     
     function format(d) {
-      var email = d[5];
+      var email = d[7];
       var username = email.substring(0, email.indexOf("@"));
       var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg"; // replace with your image URL
     
@@ -188,14 +207,15 @@
           imgElement +
         '</div>' +
         '<div class="details">' +
-          '<p><strong>First Name:</strong> '+d[1]+'</p>'+
-          '<p><strong>Last Name:</strong> '+d[2]+'</p>'+
-          '<p><strong>Phone:</strong> '+d[3]+'</p>'+
-          '<p><strong>Office:</strong> '+d[4]+'</p>'+
-          '<p><strong>Email:</strong> '+d[5]+'</p>'+
-          '<p><strong>Department:</strong> '+d[6]+'</p>'+
-          '<p><strong>Division:</strong> '+d[7]+'</p>'+
-          '<p><strong>Title:</strong> '+d[8]+'</p>'+
+          '<p><strong>Display Name:</strong> '+d[1]+'</p>'+
+          '<p><strong>First Name:</strong> '+d[2]+'</p>'+
+          '<p><strong>Last Name:</strong> '+d[3]+'</p>'+
+          '<p><strong>Phone:</strong> '+d[4]+'</p>'+
+          '<p><strong>Title:</strong> '+d[5]+'</p>'+
+          '<p><strong>Office:</strong> '+d[6]+'</p>'+
+          '<p><strong>Email Address:</strong> '+d[7]+'</p>'+
+          '<p><strong>Department:</strong> '+d[8]+'</p>'+
+          '<p><strong>Division:</strong> '+d[9]+'</p>'+
         '</div>' +
       '</div>';
     }
@@ -204,23 +224,23 @@
 </script>
 
 <script>
-
+// [0] Proflie, [1] Name, [2] First Name, [3] Last Name, [4] Phone, [5] Title, [6] Office, [7] Email Address, [8] Department, [9] Division
   function sortTable() {
     var sortValue = $('#sort-dropdown').val();
     var columnIdx = -1;
     
     switch (sortValue) {
       case "division":
-        columnIdx = 7;
+        columnIdx = 9;
         break;
       case "department":
-        columnIdx = 6;
+        columnIdx = 8;
         break;
       case "first-name":
         columnIdx = 1;
         break;
       case "office":
-        columnIdx = 4;
+        columnIdx = 6;
         break;
       default:
         columnIdx = 1;
@@ -236,7 +256,7 @@
 
   // Get the distinct department values from the table
   var table = $('#results-table').DataTable();
-  var data = table.column(6).data();
+  var data = table.column(8).data();
   data.each(function (value, index) {
     var cleanedValue = value.replace(/&amp;/g, ' & '); // replace both "&" and "amp;" with the appropriate symbol
     if (!departmentValues.includes(cleanedValue)) {
