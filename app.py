@@ -1,9 +1,10 @@
 import re
 from datetime import datetime
-
 from flask import Flask,request
+import requests
 from flask import render_template
 import pyodbc
+import os
 
 app = Flask(__name__)
 
@@ -16,6 +17,11 @@ def connection():
                       'SERVER=ericsqlserver.database.windows.net;'
                       'DATABASE=ericsqldb;UID=devuser0;PWD=Python2023;')
     return conn
+
+#def connection():
+#    myConString = os.environ['CUSTOMCONNSTR_DBConStr']
+#    conn = pypyodbc.connect(myConString)
+#    return conn
 
 @app.route("/")
 def home():
@@ -30,15 +36,30 @@ def search_results():
         query=""
     conn = connection()
     cursor = conn.cursor()
-    table = "Employees"
+
+    table="ITSTAFF"
     if query == "*" or len(query)==0:
-        mySQL=f"SELECT * from dbo.ITSTAFF"  
+        mySQL=f"SELECT * from dbo.{table}" 
     elif search_by=="AllFields":
-        mySQL=f"SELECT * from dbo.ITSTAFF where firstname=\'{query}\' or lastname=\'{query}\' or phone=\'{query}\' or office=\'{query}\' or emailaddress=\'{query}\' or Departement=\'{query}\' or division=\'{query}\' or title=\'{query}\'" 
+        mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
     else:
-        mySQL=f"SELECT * from dbo.ITSTAFF where {search_by}=\'{query}\'"
+        mySQL=f"SELECT * from dbo.{table} where {search_by} like \'%{query}%\'"
     cursor.execute(mySQL)
     results = cursor.fetchall()
-    return render_template('search_results.html', results=results,query=query,search_by=search_by)
+    return render_template('search_results.html', results=results)
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+#Deploy to Azure:
+#1. Comment out: 'import pyodbc'. Add: import pypyodbc & import os
+#2. pip freeze>requirements.txt(skip this step if already done)
+#3. Create configuration in “Settings|Configuration”:
+#   Name: DBConStr
+#   Value:DRIVER={ODBC Driver 17 for SQL Server};SERVER=tcp:ericsqlserver.database.windows.net;PORT=1433;DATABASE=ericsqldb;Authentication=ActiveDirectoryMSI
+#   Type: Custom
+#4. Replace with new DB connect function:
+#def connection():
+#    myConString = os.environ['CUSTOMCONNSTR_DBConStr']
+#    conn = pypyodbc.connect(myConString)
+#    return conn   
