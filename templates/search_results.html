@@ -2,13 +2,11 @@
 <html>
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
   <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
     <title>Search Results</title>
     <style>
         table {
             border-collapse: collapse;
-            width: 100%;
         }
         th, td {
             text-align: left;
@@ -28,18 +26,13 @@
           border-collapse: collapse;
         }
 
-        table.dataTable tbody tr{
-          border:none;
-        }
-
-        table.dataTable{
-          border-collapse: collapse;
+        table.dataTable tbody th, table.dataTable tbody td {
+          border: none;
         }
 
         .dataTables_paginate {
           margin-top: 10px;
         }
-
         .dataTables_paginate .paginate_button {
           display: inline-block;
           padding: 5px 10px;
@@ -71,14 +64,6 @@
           display: none;
         }
 
-        .dataTables_length {
-          position: absolute;
-          right: 0;
-          top: -37px;
-          margin-right: 10px;
-          display: inline-block;
-        }
-
         .employee-details {
           display: flex;
           align-items: center;
@@ -97,22 +82,34 @@
         
         .details p {
           margin: 25px 0;
-          border:none;
         }
         
         .details strong {
           margin-right: 50px;
-          border:none;
         }
 
         .hidden {
           display: none;
         }
 
+        .table-format{
+          border: none;
+        }
+
       select {
           height: 30px;
           width: 150px;
           top: -20px;
+        }
+
+        
+        .input-container {
+          display: inline-flex;
+          align-items: center;
+        }
+        
+        .input-container label {
+          margin-right: 5px;
         }
 
     </style>
@@ -133,6 +130,12 @@
 <select id="department-filter">
   <option value="">All</option>
 </select>
+
+<div class="input-container">
+  <label for="table-length">Show</label>
+  <input type="number" id="table-length" min="1" max="100" value="15">
+  <label for="table-length">results</label>
+</div>
 
 <table id="results-table" class = "display">
     <thead>
@@ -180,14 +183,12 @@
     var table = $('#results-table').DataTable({
       "paging": true,
       "ordering": true,
-      "info": false,
-      "pageLength": 15
+      "info": false
     });
     
     $('#department-filter').on('change', function() {
       table.column(8).search(this.value).draw();
       table.page('first').draw('page');
-      table.page.len(15);
     });
     
     $('#results-table tbody').on('click', 'tr', function() {
@@ -205,6 +206,16 @@
         $(this).addClass('shown');
       }
     });
+
+    var tableLengthInput = document.getElementById('table-length');
+    var dataTable = $('#results-table').DataTable({
+    });
+
+    tableLengthInput.addEventListener('input', function() {
+      var newLength = parseInt(tableLengthInput.value);
+      dataTable.page.len(newLength).draw();
+    });
+
     
     function format(d) {
       var email = d[7];
@@ -224,7 +235,7 @@
       '<div class="profile-image">' +
         imgElement +
       '</div>' +
-      '<div class="table">' +
+      '<div class="table-format">' +
         '<table>' +
           '<tr><td><strong>Display Name:</strong></td><td>'+d[1]+'</td></tr>'+
           '<tr><td><strong>First Name:</strong></td><td>'+d[2]+'</td></tr>'+
