@@ -209,16 +209,6 @@
       }
     });
 
-    var tableLengthInput = document.getElementById('table-length');
-    var dataTable = $('#results-table').DataTable({
-    });
-
-    tableLengthInput.addEventListener('input', function() {
-      var newLength = parseInt(tableLengthInput.value);
-      dataTable.page.len(newLength).draw();
-    });
-
-    
     function format(d) {
       var email = d[7];
       var username = email.substring(0, email.indexOf("@"));
@@ -253,7 +243,6 @@
     '</div>';
     }
   });
-  
 </script>
 
 <script>
