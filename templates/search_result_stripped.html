@@ -64,6 +64,10 @@
           display: none;
         }
 
+        .dataTables_length{
+          margin-left: 1400px;
+        }
+
         .employee-details {
           display: flex;
           align-items: center;
@@ -102,15 +106,10 @@
           top: -20px;
         }
 
-        
-        .input-container {
-          display: inline-flex;
-          align-items: center;
-        }
-        
-        .input-container label {
-          margin-right: 5px;
-        }
+      #results-table_wrapper{
+        margin-top : 20px;
+      }
+
 
     </style>
 </head>
@@ -131,12 +130,6 @@
   <option value="">All</option>
   <option value="Enterprise Applications/CMS">Enterprise Applications/CMS</option>
 </select>
-
-<div class="input-container">
-  <label for="table-length">Show</label>
-  <input type="number" id="table-length" min="1" max="100" value="15">
-  <label for="table-length">results</label>
-</div>
 
 <table id="results-table" class = "display" data-page-length = '15'>
     <thead>
