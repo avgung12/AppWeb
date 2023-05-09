@@ -183,7 +183,9 @@
     var table = $('#results-table').DataTable({
       "paging": true,
       "ordering": true,
-      "info": false
+      "info": false,
+      "lengthMenu": [ [10, 20, 50, -1], [10, 20, 50, "All"] ],
+      "pageLength": 15
     });
     
     $('#department-filter').on('change', function() {
@@ -281,31 +283,30 @@
     }
   }
 
- function populateDepartmentFilter() {
-  var departmentFilter = document.getElementById("department-filter");
-  var departmentValues = [];
-
-  // Get the distinct department values from the table
-  var table = $('#results-table').DataTable();
-  var data = table.column(8).data();
-  data.each(function (value, index) {
-    var cleanedValue = value.replace(/&amp;/g, ' & '); // replace both "&" and "amp;" with the appropriate symbol
-    if (!departmentValues.includes(cleanedValue)) {
-      departmentValues.push(cleanedValue);
-    }
-  });
-
-  // Add the distinct department values to the department-filter select element
-  for (var i = 0; i < departmentValues.length; i++) {
-    var option = document.createElement("option");
-    option.value = departmentValues[i];
-    var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
-    option.appendChild(optionText);
-    departmentFilter.appendChild(option);
+  function populateDepartmentFilter() {
+    var departmentFilter = document.getElementById("department-filter");
+    var departmentValues = [];
+  
+    var distinct = document.getElementById("results-table");
+    for(let i = 1; i < distinct.rows.length; i++){
+      var value = distinct.rows[i].cells[8].textContent.trim();
+      var cleanedValue = value.replace(/&amp;/g, '&'); 
+      if (!departmentValues.includes(cleanedValue)) {
+        departmentValues.push(cleanedValue);
+      }
+    };
+    
+    // Add the distinct department values to the department-filter select element
+    for (var i = 0; i < departmentValues.length; i++) {
+      var option = document.createElement("option");
+      option.value = departmentValues[i];
+      var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
+      option.appendChild(optionText);
+      departmentFilter.appendChild(option);
+    };
   }
-}
 
-populateDepartmentFilter();
+  populateDepartmentFilter();
 </script>
 
 </body>

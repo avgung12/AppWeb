@@ -129,6 +129,7 @@
 <label for="department-filter">Filter by Department:</label>
 <select id="department-filter">
   <option value="">All</option>
+  <option value="Enterprise Applications/CMS">Enterprise Applications/CMS</option>
 </select>
 
 <div class="input-container">
@@ -179,9 +180,8 @@
 <div id="pagination-links"></div>
 
 <script>
-  $(document).ready(function() {
-    var table = $('#results-table').DataTable({ 
-
+ $(document).ready(function() {
+  var table = $('#results-table').DataTable({ 
       "paging": true,
       "ordering": true,
       "info": false,
@@ -195,6 +195,7 @@
     
     //On-click function to display child rows. 
     $('#results-table tbody').on('click', 'tr', function() {
+      var table = $('#results-table').DataTable();
       var row = table.row(this);
     
       // Check if the child row is already displayed
@@ -220,7 +221,6 @@
       dataTable.page.len(newLength).draw();
     });
 
-    
     function format(d) {
       var email = d[7];
       var username = email.substring(0, email.indexOf("@"));
@@ -255,6 +255,7 @@
     '</div>';
     }
   });
+
   
 </script>
 
@@ -285,32 +286,30 @@
     }
   }
 
- function populateDepartmentFilter() {
-  var departmentFilter = document.getElementById("department-filter");
-  var departmentValues = [];
-
-  // Get the distinct department values from the table
-  var table = $('#results-table').DataTable();
-  var data = table.column(8).data();
-  data.each(function (value, index) {
-    var cleanedValue = value.replace(/&amp;/g, ' & '); 
-    if (!departmentValues.includes(cleanedValue)) {
-      departmentValues.push(cleanedValue);
-    }
-  });
-
-  // Add the distinct department values to the department-filter select element
-  for (var i = 0; i < departmentValues.length; i++) {
-    var option = document.createElement("option");
-    option.value = departmentValues[i];
-    var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
-    option.appendChild(optionText);
-    departmentFilter.appendChild(option);
+  function populateDepartmentFilter() {
+    var departmentFilter = document.getElementById("department-filter");
+    var departmentValues = [];
+  
+    var distinct = document.getElementById("results-table");
+    for(let i = 1; i < distinct.rows.length; i++){
+      var value = distinct.rows[i].cells[8].textContent.trim();
+      var cleanedValue = value.replace(/&amp;/g, '&'); 
+      if (!departmentValues.includes(cleanedValue)) {
+        departmentValues.push(cleanedValue);
+      }
+    };
+    
+    // Add the distinct department values to the department-filter select element
+    for (var i = 0; i < departmentValues.length; i++) {
+      var option = document.createElement("option");
+      option.value = departmentValues[i];
+      var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
+      option.appendChild(optionText);
+      departmentFilter.appendChild(option);
+    };
   }
-}
 
-console.log([...uniqueValues]);
-populateDepartmentFilter();
+  populateDepartmentFilter();
 </script>
 
 </body>
