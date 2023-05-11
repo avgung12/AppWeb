@@ -3,11 +3,11 @@ from datetime import datetime
 from flask import Flask,request
 import requests
 from flask import render_template
-import pyodbc
 import os
 
 app = Flask(__name__)
 
+import pyodbc
 def connection():
     server = 'ericsqlserver.database.windows.net'
     database = 'ericsqldb'
@@ -18,6 +18,7 @@ def connection():
                       'DATABASE=ericsqldb;UID=devuser0;PWD=Python2023;')
     return conn
 
+#import pypyodbc
 #def connection():
 #    myConString = os.environ['CUSTOMCONNSTR_DBConStr']
 #    conn = pypyodbc.connect(myConString)
@@ -38,12 +39,14 @@ def search_results():
     cursor = conn.cursor()
 
     table="ITSTAFF"
-    if query == "*" or len(query)==0:
-        mySQL=f"SELECT * from dbo.{table}" 
+    if query == "*" or len(query) < 2 :
+        #mySQL=f"SELECT * from dbo.{table}" 
+        mySQL=F"SELECT * from dbo.{table} where 1=2"
     elif search_by=="AllFields":
-        mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
+        #mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
+        mySQL=f"SELECT * from dbo.{table} where name = '{query}\' or firstname = \'{query}\' or lastname = \'{query}\' or phone = \'{query}\' or office = \'{query}\' or emailaddress = \'{query}\' or Departement = \'{query}\' or division = \'{query}\' or title = \'{query}\'"
     else:
-        mySQL=f"SELECT * from dbo.{table} where {search_by} like \'%{query}%\'"
+        mySQL=f"SELECT * from dbo.{table} where {search_by} = \'{query}\'"
     cursor.execute(mySQL)
     results = cursor.fetchall()
     return render_template('search_result_stripped.html', results=results)

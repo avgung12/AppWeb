@@ -9,25 +9,55 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 100px;
+        height: 150px;
         z-index: 1;
         background-color: white;
         padding: 2px;
         border-bottom: 1px solid black;
+        background-color: #860038;
       }
       
       iframe {
         width: 100%;
-        height: calc(100vh - 220px);
+        height: calc(100vh - 240px);
         border: none;
-        margin-top: 100px;
+        margin-top: 180px;
       }
+      .search-icon {
+        position: absolute;
+        left: 60px;
+        top: 50px;
+      }
+      .search-form {
+        display: flex;
+        align-items: center;
+      }
+      
+      .search-bar-container {
+        display: flex;
+        align-items: center;
+      }
+      
+      .search-header-container {
+        display: inline block;
+        align-items: center;
+        margin-right: 10px;
+        font-family: 'Proxima Nova', sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+      }
+      
+      .search-header {
+        margin-right: 10px;
+      }
+
     </style>
   </head>
 <body>
-	<div id="search-form">
         <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
-          <input type="text" name="query" placeholder=" " value=" " style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
+          <h2 class="search-header">Faculty/Staff Directory</h2>
+          <img src="https://testwebdbphotos.blob.core.windows.net/pics/CSUDHlogo.png" alt="Search Icon" class="search-icon" width="250" height="50">
+          <input type="text" name="query" placeholder= " Search... "  style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
           <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">
             <option value="AllFields">All Fields</option>
             <option value="Name">Name</option>

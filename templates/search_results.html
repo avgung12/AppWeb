@@ -33,6 +33,7 @@
         .dataTables_paginate {
           margin-top: 10px;
         }
+
         .dataTables_paginate .paginate_button {
           display: inline-block;
           padding: 5px 10px;
@@ -44,6 +45,7 @@
           cursor: pointer;
           transition: all 0.2s ease-in-out;
         }
+        
         .dataTables_paginate .paginate_button:hover {
           color: #fff;
           background-color: #333;
@@ -92,10 +94,6 @@
           display: none;
         }
 
-        .table-format{
-          border: none;
-        }
-
       select {
           height: 30px;
           width: 150px;
@@ -107,14 +105,7 @@
         }
 
         
-        .input-container {
-          display: inline-flex;
-          align-items: center;
-        }
-        
-        .input-container label {
-          margin-right: 5px;
-        }
+
 
     </style>
 </head>
@@ -134,12 +125,6 @@
 <select id="department-filter">
   <option value="">All</option>
 </select>
-
-<div class="input-container">
-  <label for="table-length">Show</label>
-  <input type="number" id="table-length" min="1" max="100" value="15">
-  <label for="table-length">results</label>
-</div>
 
 <table id="results-table" class = "display">
     <thead>
