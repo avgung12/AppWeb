@@ -5,6 +5,7 @@
   <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
     <title>Search Results</title>
     <style>
+
         table {
             border-collapse: collapse;
         }
@@ -32,8 +33,8 @@
 
         .dataTables_paginate {
           margin-top: 10px;
+          margin-right: 130px;
         }
-
         .dataTables_paginate .paginate_button {
           display: inline-block;
           padding: 5px 10px;
@@ -45,7 +46,6 @@
           cursor: pointer;
           transition: all 0.2s ease-in-out;
         }
-        
         .dataTables_paginate .paginate_button:hover {
           color: #fff;
           background-color: #333;
@@ -63,6 +63,10 @@
         }
 
         .dataTables_filter {
+          display: none;
+        }
+        
+        .dataTables_length{
           display: none;
         }
 
@@ -94,22 +98,26 @@
           display: none;
         }
 
+        .table-format{
+          border: none;
+        }
+
       select {
           height: 30px;
           width: 150px;
-          top: -20px;
+          align-items: center;
+          top: 50px;
         }
 
-        .dataTables_length{
-          margin-left: 1400px;
-        }
-
-        
-
-
+      #results-table{
+        margin-left: 130px;
+        margin-right: -20px;
+        margin-top: 30px;
+        width: 100%;
+      }
     </style>
 </head>
-<body>
+<body ondragstart="return false" onselectstart="return false">
 
 <div id="pagination-links"></div>
 
@@ -126,7 +134,7 @@
   <option value="">All</option>
 </select>
 
-<table id="results-table" class = "display">
+<table id="results-table" class = "display" data-page-length = '15'>
     <thead>
         <tr>
             <th>Profile</th>
@@ -166,15 +174,14 @@
 </table>
 
 <div id="pagination-links"></div>
-
 <script>
-  $(document).ready(function() {
-    var table = $('#results-table').DataTable({
+ $(document).ready(function() {
+  var table = $('#results-table').DataTable({ 
       "paging": true,
       "ordering": true,
       "info": false,
-      "lengthMenu": [ [10, 20, 30, 50, -1], [10, 20, 30, 50, "All"] ],
-      "pageLength": 15
+      "pageLength": 15,
+      "lengthMenu": [ [10, 20, 50, -1], [10, 20, 50, "All"] ]
     });
     
     $('#department-filter').on('change', function() {
@@ -182,7 +189,9 @@
       table.page('first').draw('page');
     });
     
+    //On-click function to display child rows. 
     $('#results-table tbody').on('click', 'tr', function() {
+      var table = $('#results-table').DataTable();
       var row = table.row(this);
     
       // Check if the child row is already displayed
@@ -197,6 +206,8 @@
         $(this).addClass('shown');
       }
     });
+
+    //Add custom input for number of results
 
     function format(d) {
       var email = d[7];
@@ -232,6 +243,7 @@
     '</div>';
     }
   });
+
 </script>
 
 <script>

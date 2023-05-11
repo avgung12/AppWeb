@@ -49,7 +49,7 @@ def search_results():
         mySQL=f"SELECT * from dbo.{table} where {search_by} = \'{query}\'"
     cursor.execute(mySQL)
     results = cursor.fetchall()
-    return render_template('search_result_stripped.html', results=results)
+    return render_template('search_results.html', results=results)
 
 if __name__ == '__main__':
     app.run(debug=True)
