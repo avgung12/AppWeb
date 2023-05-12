@@ -43,10 +43,10 @@ def search_results():
         #mySQL=f"SELECT * from dbo.{table}" 
         mySQL=F"SELECT * from dbo.{table} where 1=2"
     elif search_by=="AllFields":
-        #mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
-        mySQL=f"SELECT * from dbo.{table} where name = '{query}\' or firstname = \'{query}\' or lastname = \'{query}\' or phone = \'{query}\' or office = \'{query}\' or emailaddress = \'{query}\' or Departement = \'{query}\' or division = \'{query}\' or title = \'{query}\'"
+        mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
+        #mySQL=f"SELECT * from dbo.{table} where name = '{query}\' or firstname = \'{query}\' or lastname = \'{query}\' or phone = \'{query}\' or office = \'{query}\' or emailaddress = \'{query}\' or Departement = \'{query}\' or division = \'{query}\' or title = \'{query}\'"
     else:
-        mySQL=f"SELECT * from dbo.{table} where {search_by} = \'{query}\'"
+        mySQL=f"SELECT * from dbo.{table} where {search_by} like \'%{query}%"
     cursor.execute(mySQL)
     results = cursor.fetchall()
     return render_template('search_results.html', results=results)
