@@ -14,12 +14,29 @@
             padding: 8px;
             border: 1px solid #ddd;
         }
+
         th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
+        }
+        
+        tr:nth-child(odd) {
+          background-color: #ffffff;
+      }
+
+        .table-format {
+          background-color: #f9f9f9;
+        }
+
+        .table-format tr(odd){
+          background-color: #f9f9f9;
+        }
+        
+        .table-format tr(even){
+          background-color: #f9f9f9;
         }
 
         table, th, td {
@@ -110,10 +127,11 @@
         }
 
       #results-table{
-        margin-left: 130px;
-        margin-right: -20px;
+        margin: 0 auto;
         margin-top: 30px;
         width: 100%;
+        table-layout: fixed;
+        white-space: nowrap;
       }
     </style>
 </head>
@@ -177,11 +195,19 @@
 <script>
  $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
+      "resonsive": false,
       "paging": true,
       "ordering": true,
       "info": false,
       "pageLength": 15,
-      "lengthMenu": [ [10, 20, 50, -1], [10, 20, 50, "All"] ]
+      "lengthMenu": [ [10, 20, 50, -1], [10, 20, 50, "All"] ],
+      "columnDefs": [
+      { "width": 120, "targets": [4]},
+      { "width": 450, "targets": 5},
+      { "width": 150, "targets": [1, 6]},
+      { "width": 200, "targets": [3, 7]},
+      { "width": 400, "targets": 8 }
+      ]
     });
     
     $('#department-filter').on('change', function() {
