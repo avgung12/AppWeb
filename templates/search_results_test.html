@@ -82,6 +82,12 @@
         .dataTables_filter {
           display: none;
         }
+
+        .dataTables_length {
+          position: absolute;
+          top: 8px;
+          left: 720px;
+        }
         
         .employee-details {
           display: flex;
@@ -117,7 +123,7 @@
 
       select {
           height: 30px;
-          width: 150px;
+          width: 240px;
           align-items: center;
           top: 50px;
         }
@@ -149,7 +155,7 @@
   <option value="">All</option>
 </select>
 
-<table id="results-table" class = "display" data-page-length = '15'>
+<table id="results-table" class = "display">
     <thead>
         <tr>
             <th>Profile</th>
@@ -192,12 +198,10 @@
 <script>
  $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
-      "resonsive": false,
       "paging": true,
       "ordering": true,
-      "info": false,
-      "pageLength": 15,
-      "lengthMenu": [ [10, 20, 50, -1], [10, 20, 50, "All"] ],
+      "info": true,
+      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ],
       "columnDefs": [
       { "width": 120, "targets": [4]},
       { "width": 450, "targets": 5},
