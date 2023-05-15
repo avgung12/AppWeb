@@ -83,10 +83,11 @@
           display: none;
         }
         
-        .dataTables_length{
-          display: none;
+        .dataTables_length {
+          position: absolute;
+          top: 8px;
+          left: 720px;
         }
-
         .employee-details {
           display: flex;
           align-items: center;
@@ -119,12 +120,13 @@
           border: none;
         }
 
-      select {
+        select {
           height: 30px;
-          width: 150px;
+          width: 240px;
           align-items: center;
           top: 50px;
         }
+
 
       #results-table{
         margin: 0 auto;
@@ -201,6 +203,7 @@
       "ordering": true,
       "info": false,
       "pageLength": 15,
+      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ],
       "columnDefs": [
       { "width": 120, "targets": [4]},
       { "width": 450, "targets": 5},
