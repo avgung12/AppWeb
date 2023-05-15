@@ -26,7 +26,7 @@ def connection():
 
 @app.route("/")
 def home():
-    return render_template("searchiframe.html")
+    return render_template("searchiframe_testcase.html")
 
 @app.route('/search_results', methods=['GET', 'POST'])
 def search_results():

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSUDH Faculty & STAFF Phone Directory</title>
+    <style>
+
+     /*Adjusted layout of the search button and input form.*/
+      #search-form {
+        text-align: center; /*Search form and bar, aligned to the center. */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;      
+        height: 140px;  /*Height of search bar, separated from the iFrame.*/
+        z-index: 1;
+        background-color: white;
+        padding: 2px;
+        border-bottom: 1px solid black; /*Border to separate search form and iframe.*/
+        background-color: #860038;
+      }
+      
+      /* iFrame takes 100% of width of its section*/
+      iframe {
+        width: 100%;
+        height: calc(100vh - 240px); /* 100hv = 100% of all its height, 240px height */
+        border: none;
+        margin-top: 180px;
+      }
+
+      /*Layout of CSUDH Icon*/
+      .search-icon {
+        position: absolute;  /*Located near the search bar ,but adjusted 50 pixels down, 35 pixels to the right*/
+        left: 35px;
+        top: 50px;
+      }
+
+      /*Layout of "Faculty / Staff Directory" */
+      .search-header {
+        font-family: 'ProxNova-Light', sans-serif; /*Default font of CSUDH, */
+        color: #ededed;
+        font-size: 45px;                /*Color scheme of Gray93. 
+        font-weight: 700;
+        margin-top: 20px;               /*Located above the search bar by 15 pixels, 20 pixels below the top page border. 
+        margin-bottom: -15px;
+      }
+
+    </style>
+  </head>
+
+  <!-- Body content -->
+<body>
+      <!-- Content of search bar and form -->
+        <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
+          <!-- Search header, appears on top of search bar-->
+          <h2 class="search-header">Faculty/Staff Directory</h2>          
+          
+          <!-- Image icon, sourced from online blob, search-icon, adjusted in CSS, 175 by 35 -->
+          <img src="https://testwebdbphotos.blob.core.windows.net/pics/CSUDHlogo.png" alt="Search Icon" class="search-icon" width="175" height="35">
+
+          <!-- Search bar, has placeholder "search..." as hint, Search bar is 300 pixels wide, 30 pixels tall. -->
+          <input type="text" name="query" placeholder= " Search... "  style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
+
+          <!-- Selection based dropdown menu, based on what to query by, (by Name, First Name, Last Name, Phone Number, etc. )-->
+          <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">
+          
+          <!-- Search query has to be exact to any values within contacts, All Fields, searches by all types. -->
+            <option value="AllFields">All Fields</option>
+            <option value="Name">Name</option>
+            <option value="FirstName">First Name</option>   <!-- Search by Name, input value needs to have existing match, whether by first name or last name-->
+            <option value="LastName">Last Name</option>     <!-- Search by First Name or LastName, First Name needs to have existing match, or Last Name has existing match.  -->
+            <option value="Phone">Phone</option>
+            <option value="Office">Office</option>       
+            <option value="EmailAddress">Email Address</option> <!-- Searching by phone, office, email, Department, Title, Division, input must have matching records.-->
+            <option value="Departement">Department</option>
+            <option value="Title">Title</option>
+            <option value="Division">Division</option>
+          </select>
+          <input type="submit" value="Search" style="height: 30px;"> <!-- Search submit button-->
+        </form>
+      </div>
+      
+      <!-- iFrame targeter, iframe is seearch_results.html, allow iframe to submit frames, and search forms. -->
+      <iframe name="search_results_iframe" id="search_results_iframe" src="{{ url_for('search_results') }}" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+      
+      <script type="text/javascript">
+        function submitForm() {
+          var form = document.getElementById("search-form");
+          var iframe = document.getElementById("search_results_iframe");
+          iframe.src = "{{ url_for('search_results') }}";
+          return false; // prevent the form from submitting normally
+        }
+      </script>
+    </body>
+</html>
