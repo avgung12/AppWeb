@@ -47,8 +47,15 @@
           border-collapse: collapse;
         }
 
+        .dataTables_wrapper .dataTables_paginate {
+          position: relative;
+          transform: translateY(-20px); /* adjust the value as needed */
+        }
+
         /* Layout for pagination links, inline, page links are in the same block, 5 pixels apart*/ 
         .dataTables_paginate .paginate_button {
+          position: sticky;
+          bottom: 0;
           display: inline-block;
           padding: 5px 10px;
           border: 1px solid #ccc;
@@ -84,7 +91,7 @@
         
         /*"Show results bar", moved next to department filter and sort by */
         .dataTables_length {
-          position: absolute;
+          position: fixed;
           top: 8px;
           left: 720px;
         }
@@ -112,7 +119,6 @@
         .hidden {
           display: none;
         }
-
       
         table.dataTable tbody th, table.dataTable tbody td {
           border: none;
@@ -197,17 +203,23 @@
                 <td>{{ result[8] }}</td>
             </tr>
         {% endfor %}
+
+        <div id="pagination-links"></div>
     </tbody>
 </table>
 
 <!-- Implement pagination element to paginate data-->
-<div id="pagination-links"></div>
+
 
 <script>
 
 //Using JavaScript to control DataTables properties. 
  $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
+    "fixedHeader": {
+      header: true,
+      footer: true
+    },
       "resonsive": true, //Enables dynamic size based on information insertion, set True
       "paging": true,  //Enable paging, set True
       "ordering": true, //Enable sorting and ordering, set True
