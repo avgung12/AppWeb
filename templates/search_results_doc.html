@@ -146,17 +146,29 @@
 
       /*DataTables layout, moved down 30 pixels, no text-wrapping, */
       #results-table{
+        position: relative;
         margin: 0 auto;
         margin-top: 30px;
         width: 100%;
         table-layout: fixed;
         white-space: nowrap;
-
       }
 
       .center-justify {
         display: flex;
         justify-content: center;
+        position: relative;
+        margin-top: 10px;
+        margin-right: 60px;
+      }
+      .search-justify {
+        position: relative;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-right: 1480px;
       }
 
 
@@ -232,7 +244,6 @@
 
 <!-- Implement pagination element to paginate data-->
 
-</div>
 
 <script>
   
@@ -240,7 +251,7 @@
 //Using JavaScript to control DataTables properties. 
  $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
-       dom: '<"center-justify"p>',
+    dom: '<"search-justify"l>t<"center-justify"p>',
       "resonsive": true, //Enables dynamic size based on information insertion, set True
       "paging": true,  //Enable paging, set True
       "ordering": true, //Enable sorting and ordering, set True
