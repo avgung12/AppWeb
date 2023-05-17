@@ -48,6 +48,10 @@
           border: none;
         }
 
+        .dataTables_paginate {
+          margin-top: 10px;
+          margin-right: 130px;
+        }
         .dataTables_paginate .paginate_button {
           display: inline-block;
           padding: 5px 10px;
@@ -79,11 +83,10 @@
           display: none;
         }
         
-        .dataTables_length {
-          position: absolute;
-          top: 8px;
-          left: 720px;
+        .dataTables_length{
+          display: none;
         }
+
         .employee-details {
           display: flex;
           align-items: center;
@@ -116,13 +119,12 @@
           border: none;
         }
 
-        select {
+      select {
           height: 30px;
-          width: 240px;
+          width: 150px;
           align-items: center;
           top: 50px;
         }
-
 
       #results-table{
         margin: 0 auto;
@@ -134,7 +136,7 @@
     </style>
 </head>
 
-<body ondragstart= "return false" onselectstart="return false">
+<body ondragstart="return false" onselectstart="return false">
 
 <div id="pagination-links"></div>
 
@@ -151,7 +153,7 @@
   <option value="">All</option>
 </select>
 
-<table id="results-table" class = "display" data-page-length = '15'>
+<table id="results-table" class = "display" data-page-length = '11'>
     <thead>
         <tr>
             <th>Profile</th>
@@ -199,7 +201,6 @@
       "ordering": true,
       "info": false,
       "pageLength": 15,
-      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ],
       "columnDefs": [
       { "width": 120, "targets": [4]},
       { "width": 450, "targets": 5},
