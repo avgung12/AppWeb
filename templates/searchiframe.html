@@ -37,6 +37,20 @@
         margin-bottom: -15px;
       }
 
+      .container {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        font-family: 'ProxNova-Light', sans-serif; 
+        font-size: 14px;
+        font-weight: bold;
+        justify-content: center;
+      }
+
+      .link-header{
+        margin-left: 5px;
+      }
+
     </style>
   </head>
 <body>
@@ -70,5 +84,10 @@
           return false; // prevent the form from submitting normally
         }
       </script>
+
+      <div class="container">
+        <p>CSUDH Employees: Please request changes by opening a ticket at:</p>
+        <a class="link-header" href="https://csudh.service-now.com/it?id=sc_cat_item&catalog=service&sys_id=23bc8a84131f9b406a8635528144b02f" target="_blank">ServiceNOW</a>
+      </div>
     </body>
 </html>
