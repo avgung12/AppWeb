@@ -144,11 +144,13 @@
 
       #results-table{
         position: relative;
+        justify-content: center;
         margin: 0 auto;
         margin-top: 30px;
         width: 100%;
-        table-layout: fixed;
         white-space: nowrap;
+        overflow-x: auto;
+       -webkit-overflow-scrolling: touch;
       }
 
       .center-justify {
@@ -238,11 +240,14 @@
       "info": false,
       "pageLength": 15,
       "columnDefs": [
-      { "width": 120, "targets": [4]},
-      { "width": 450, "targets": 5},
-      { "width": 150, "targets": [1, 6]},
-      { "width": 200, "targets": [3, 7]},
-      { "width": 400, "targets": 8 }
+      { "width": 0, "targets": 0},
+      { "width": 180, "targets": 1},
+      { "width": 150, "targets": 3},
+      { "width": 180, "targets": 2},
+      { "width": 150, "targets": 4},
+      { "width": 180, "targets": 5},
+      { "width": 140, "targets": 6},
+      { "width": 170, "targets": 7}
       ]
     });
     
