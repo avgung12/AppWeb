@@ -149,11 +149,13 @@
       /*DataTables layout, moved down 30 pixels, no text-wrapping, */
       #results-table{
         position: relative;
+        justify-content: center;
         margin: 0 auto;
         margin-top: 30px;
         width: 100%;
-        table-layout: fixed;
         white-space: nowrap;
+        overflow-x: auto;
+       -webkit-overflow-scrolling: touch;
       }
 
       .center-justify {
@@ -253,23 +255,23 @@
 //Using JavaScript to control DataTables properties. 
  $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
-    dom: '<"search-justify"l>t<"center-justify"p>',
-      "resonsive": true, //Enables dynamic size based on information insertion, set True
+      dom: '<"search-justify"l>t<"center-justify"p>',
+      "resonsive": true, //Enables dynamic size based on information insertion, set False
       "paging": true,  //Enable paging, set True
       "ordering": true, //Enable sorting and ordering, set True
       "info": false, //Displays information regarding the amount of queries displayed, set False
       "pageLength": 15,                      // pageLength sets default amount of pages when first loading, set to 15. 
       //Edits "show x results prompt", set with options, 10, 15, 20, 25, 30 ,50, to all results within a single page. 
-      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ], 
+      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ]
       
       //Controls column width in each category, [1] Name. [2] Phone, [3] Title, [4] Office, [5] Email Address....
-      "columnDefs": [
-      { "width": 120, "targets": [4]},
-      { "width": 450, "targets": 5},
-      { "width": 150, "targets": [1, 6]},
-      { "width": 200, "targets": [3, 7]},
-      { "width": 400, "targets": 8 }
-      ]
+      //"columnDefs": [
+      //{ "width": 120, "targets": [4]},
+      //{ "width": 450, "targets": 5},
+      //{ "width": 150, "targets": 1},
+      //{ "width": 150, "targets": 2}
+      //{ "width": 200, "targets": [3, 7]},
+      //{ "width": 400, "targets": 8 }
     });
     
     //References to department-filter menu, controls 
