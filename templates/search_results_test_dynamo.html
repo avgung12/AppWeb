@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Load CDN sources from jquery and CDN for DataTables-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+    <title>Search Results</title>
+    <style>
+
+      /*Removal of borders from the table, for each row*/
+        table {
+            border-collapse: collapse;
+        }
+
+      /*Each row and column, has text-aligned to the left */
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+     /*Default color for each cell #f2f2f2 */
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+    /*Every even cell has a greyed color*/
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+    /*Corresponds to the 
+        .table-format {
+          background-color: #f9f9f9;
+        }
+
+        .table-format tr:nth-child(odd){
+          background-color: #f9f9f9;
+        }
+
+        .table-format tr:nth-child(even){
+          background-color: #f9f9f9;
+        }
+
+        table, th, td {
+          border: none;
+          border-collapse: collapse;
+        }
+
+        .centered-pagination {
+          text-align: center;
+        }
+
+
+        /* Layout for pagination links, inline, page links are in the same block, 5 pixels apart*/ 
+        .dataTables_paginate .paginate_button {
+          display: inline-block;
+          padding: 5px 10px;
+          border: 1px solid #ccc;
+          position: relative;
+          left: 50px;
+          margin-right: 10px;
+          font-size: 14px;
+          color: #333;
+          background-color: #fff;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          overflow-x: auto;
+        }
+        
+        .dataTables_paginate .paginate_button:hover {
+          color: #fff;
+          background-color: #333;
+        }
+        
+        /* Changes opacity of button to display pagination is not posible*/
+        .dataTables_paginate .paginate_button.disabled {
+          opacity: 0.5;
+          cursor: default;
+        }
+        
+        /*When on the current page, background color changes*/
+        .dataTables_paginate .paginate_button.current {
+          font-weight: bold;
+          color: #fff;
+          background-color: #333;
+        }
+
+        /* Disabled search bar that appears on datatable is disabled*/
+        .dataTables_filter {
+          display: none;
+        }
+        
+        /*"Show results bar", moved next to department filter and sort by */
+        .dataTables_length {
+          display: none;
+        }
+        
+        /*Employee profile layout, information is positioned to the center, box border 3px thick.  */
+        .employee-details {
+          display: flex;
+          align-items: center;
+          border: 3px solid #ccc;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+        
+        /*Profile image class, and is placed to the right within the child row. */
+        .profile-image {
+          margin-right: 20px;
+        }
+        
+        /*The profile image corners are rounded on the outer edge*/
+        .profile-image img {
+          border-radius: 100%;
+        }
+        
+        /*Used to hide unused information, such as User first name and last name, away from the table. */ 
+        .hidden {
+          display: none;
+        }
+
+      
+        table.dataTable tbody th, table.dataTable tbody td {
+          border: none;
+        }
+
+      /*Edits the height and width of all drop down menus within the frame*/
+        .option-menu {
+          display: flex; 
+          flex-direction: row;
+          justify-content: center;
+         /* magin-right: 200px; */
+        }
+
+        select{
+          margin-left: 15px; 
+          margin-right: 15px;
+          height: 20px;
+          width: 300px;
+          margin-top: -8px;
+        }
+
+        label{
+          /*magin-right: 20px;*/
+          margin-top: -8px;
+        }
+
+      /*DataTables layout, moved down 30 pixels, no text-wrapping, */
+      #results-table{
+        position: relative;
+        justify-content: center;
+        margin: 0 auto;
+        margin-top: 30px;
+        width: 100%;
+        white-space: nowrap;
+        overflow-x: auto;
+       -webkit-overflow-scrolling: touch;
+      }
+
+      .center-justify {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        margin-top: 10px;
+        margin-right: 60px;
+      }
+      .search-justify {
+        position: relative;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-right: 1480px;
+      }
+
+
+    </style>
+</head>
+
+<!-- Body content, ondragstart and onselectstart are disabled, users are not able to copy and paste user information. -->
+<body>
+
+  <!-- Selection drop down menu, sorts alphabetically based on: Name, Office, Department, Division-->
+<div class = "option-menu">
+<label for="sort-dropdown">Sort by:</label>
+<select id="sort-dropdown" onchange="sortTable()">
+  <option value="first-name">Name</option>
+  <option value="office">Office</option>
+  <option value="department">Department</option>
+  <option value="division">Division</option>
+</select>
+
+<!--Selection drop down menu, filters based on department, placeholder, is filled by distinct department values.-->
+<label for="department-filter">Filter by Department:</label>
+<select id="department-filter">
+  <option value="">All</option>
+</select>
+</div>
+
+<!-- Table to display all results of searching, hidden classes First Name, and Last Name will not appear in the table.-->
+<div id = 'table-container'>
+<table id="results-table" class = "display", onpaste="return false;" onCopy="return false">
+    <thead>
+        <tr>
+            <th>Profile</th>
+            <th>Name</th>
+            <th class="hidden">First Name</th>
+            <th class="hidden">Last Name</th>
+            <th>Phone</th>
+            <th>Title</th>
+            <th>Office</th>
+            <th>Email Address</th>
+            <th>Department</th>
+            <th>Division</th>
+        </tr>
+    </thead>
+    <tbody>
+      <!--results[]0:name 1:FirstName,2:LastName,3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
+      <!-- Loop iterates within the results array, checks if there are any values within the array-->
+        {% for result in results %}
+        <tr class="table-row" >
+
+      <!-- Checks for a possible value within result [5], which is existing email, email is split based on username, to call image-->
+          {% if result[5] %}
+            {% set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/' + result[5].split('@')[0] + '.jpg' %}
+          {%else%}
+            {%set img_url = 'https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg'%}
+        {% endif %}    
+
+        <!-- Proceed to load and display all information according the display table categories above. -->
+              <td> <img src="{{ img_url }}" width="30" height="30" onerror="this.onerror=null; this.src='https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg';"></td>
+                <td>{{ result[0] }}</td>
+                <td class="hidden">{{ result[1] }}</td> 
+                <td class="hidden">{{ result[2] }}</td>
+                <td>{{ result[3] }}</td>
+                <td>{{ result[7] }}</td>
+                <td>{{ result[4] }}</td>
+                <td>{{ result[5] }}</td>
+                <td>{{ result[6] }}</td>
+                <td>{{ result[8] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<!-- Implement pagination element to paginate data-->
+
+
+<script>
+  
+
+//Using JavaScript to control DataTables properties. 
+ $(document).ready(function() {
+  var table = $('#results-table').DataTable({ 
+      dom: '<"search-justify"l>t<"center-justify"p>',
+      "resonsive": true, //Enables dynamic size based on information insertion, set False
+      "paging": true,  //Enable paging, set True
+      "ordering": true, //Enable sorting and ordering, set True
+      "info": false, //Displays information regarding the amount of queries displayed, set False
+      "pageLength": 15,                      // pageLength sets default amount of pages when first loading, set to 15. 
+      //Edits "show x results prompt", set with options, 10, 15, 20, 25, 30 ,50, to all results within a single page. 
+      "lengthMenu": [ [10,15,20,25,30,50,-1], [10, 15, 20, 25, 30, 50, "All"] ],
+      
+      //Controls column width in each category, [1] Name. [2] Phone, [3] Title, [4] Office, [5] Email Address....
+      //"columnDefs": [
+      //{ "width": 120, "targets": [4]},
+      //{ "width": 450, "targets": 5},
+      //{ "width": 150, "targets": 1},
+      //{ "width": 150, "targets": 2}
+      //{ "width": 200, "targets": [3, 7]},
+      //{ "width": 400, "targets": 8 }
+      "autoWidth": false
+    });
+
+    
+    //References to department-filter menu, controls 
+    $('#department-filter').on('change', function() {
+      table.column(8).search(this.value).draw();
+      table.page('first').draw('page');
+    });
+    
+    //On-click function to display child rows.
+    $('#results-table tbody').on('click', 'tr', function() {
+      //Refers to results-table to gather data
+      var table = $('#results-table').DataTable();
+      var row = table.row(this);
+    
+      // Check if the child row is already displayed
+      if (row.child.isShown()) {
+        row.child.hide();
+        $(this).removeClass('shown');
+      } else {
+        // Display the child row
+        var data = row.data();
+        var childRow = format(data); // format the data using the format function
+        row.child(childRow).show(); // pass the formatted data to the child row
+        $(this).addClass('shown');
+      }
+    });
+
+    //Formats the infromation within child rows. 
+    function format(d) {
+      var email = d[7];
+      var username = email.substring(0, email.indexOf("@"));
+      var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
+      
+      // add the image element to the row
+      var imgElement;
+      if (imgUrl) {
+        imgElement = '<img src="' + imgUrl + '" width="100" onerror="this.onerror=null; this.src=\'https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg\'">';
+      } else {
+        var defaultUrl = "https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg";
+        imgElement = '<img src="' + defaultUrl + '">';
+      }
+      // Wrap the returned HTML in a parent table container, div with a class, table layout to dispplay all information gathered from #results-table. 
+    return '<div class="employee-details">' +
+      '<div class="profile-image">' +
+        imgElement +
+      '</div>' +
+      '<div class="table-format">' +
+        '<table>' +
+          '<tr><td><strong>Display Name:</strong></td><td>'+d[1]+'</td></tr>'+
+          '<tr><td><strong>First Name:</strong></td><td>'+d[2]+'</td></tr>'+
+          '<tr><td><strong>Last Name:</strong></td><td>'+d[3]+'</td></tr>'+
+          '<tr><td><strong>Phone:</strong></td><td>'+d[4]+'</td></tr>'+
+          '<tr><td><strong>Title:</strong></td><td>'+d[5]+'</td></tr>'+
+          '<tr><td><strong>Office:</strong></td><td>'+d[6]+'</td></tr>'+
+          '<tr><td><strong>Email Address:</strong></td><td>'+d[7]+'</td></tr>'+
+          '<tr><td><strong>Department:</strong></td><td>'+d[8]+'</td></tr>'+
+          '<tr><td><strong>Division:</strong></td><td>'+d[9]+'</td></tr>'+
+        '</table>' +
+      '</div>' +
+    '</div>';
+    }
+  });
+
+</script>
+
+<script>
+// [0] Proflie, [1] Name, [2] First Name, [3] Last Name, [4] Phone, [5] Title, [6] Office, [7] Email Address, [8] Department, [9] Division
+
+// Function sorts table categories, references sort-dropdown, and columns based on its value. 
+  function sortTable() {
+    var sortValue = $('#sort-dropdown').val();
+    var columnIdx = -1;
+    
+    switch (sortValue) {
+      case "division":
+        columnIdx = 9;
+        break;
+      case "department":
+        columnIdx = 8;
+        break;
+      case "first-name":
+        columnIdx = 1;
+        break;
+      case "office":
+        columnIdx = 6;
+        break;
+      default:
+        columnIdx = 1;
+    }
+    if (columnIdx >= 1) {
+      //Uses a .order() function within datatables, and based on columnindex, sorts by ascending order. 
+      $('#results-table').DataTable().order([columnIdx, 'asc']).draw();
+    }
+  }
+
+  //Dynamically adds the distinct department values to department-filter
+  function populateDepartmentFilter() {
+    var departmentFilter = document.getElementById("department-filter");
+    var departmentValues = [];
+  
+    var distinct = document.getElementById("results-table");
+    for(let i = 1; i < distinct.rows.length; i++){
+      var value = distinct.rows[i].cells[8].textContent.trim();
+      var cleanedValue = value.replace(/&amp;/g, '&'); 
+      if (!departmentValues.includes(cleanedValue)) {
+        departmentValues.push(cleanedValue);
+      }
+    };
+    
+    // Add the proper text and labels, based on the departmentValues array, and dispalys them in the dropdown menu of department-filter. 
+    for (var i = 0; i < departmentValues.length; i++) {
+      var option = document.createElement("option");
+      option.value = departmentValues[i];
+      var optionText = document.createTextNode(departmentValues[i].replace(/&amp;/g, '&')); // only replace "amp;" with "&" for display purposes
+      option.appendChild(optionText);
+      departmentFilter.appendChild(option);
+    };
+  }
+
+//Calls the populateDepartmentFilter function. 
+  populateDepartmentFilter();
+</script>
+
+</body>
+</html>
