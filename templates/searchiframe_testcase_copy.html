@@ -77,14 +77,7 @@
       
       <iframe name="search_results_iframe" id="search_results_iframe" src="{{ url_for('search_results') }}" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
       
-      <script type="text/javascript">
-        function submitForm() {
-          var form = document.getElementById("search-form");
-          var iframe = document.getElementById("search_results_iframe");
-          iframe.src = "{{ url_for('search_results') }}";
-          return false; // prevent the form from submitting normally
-        }
-      </script>
+      <script src="static/framed_o.js"></script>
 
       <div class="container">
         <p>CSUDH Employees: Please request changes by opening a ticket at:</p>

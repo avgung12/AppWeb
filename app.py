@@ -5,7 +5,7 @@ import requests
 from flask import render_template
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 import pyodbc
 def connection():
@@ -18,15 +18,15 @@ def connection():
                       'DATABASE=ericsqldb;UID=devuser0;PWD=Python2023;')
     return conn
 
-#import pypyodbc
-#def connection():
-#    myConString = os.environ['CUSTOMCONNSTR_DBConStr']
-#    conn = pypyodbc.connect(myConString)
-#    return conn
+##import pypyodbc
+##def connection():
+  ##  myConString = os.environ['CUSTOMCONNSTR_DBConStr']
+   ## conn = pypyodbc.connect(myConString)
+    ##return conn
 
 @app.route("/")
 def home():
-    return render_template("searchiframe_testcase.html")
+    return render_template("searchiframe_testcase_copy.html")
 
 @app.route('/search_results', methods=['GET', 'POST'])
 def search_results():
@@ -38,6 +38,11 @@ def search_results():
     conn = connection()
     cursor = conn.cursor()
 
+    #storageAccount=os.environ['env_storageAccount']
+    #containerName=os.environ['env_containerName']
+    #table=os.environ['env_myTable']
+    storageAccount="testwebdbphotos"
+    containerName="pics"
     table="ITSTAFF"
     orderBy=f"order by Name ASC"
     if query == "*" or len(query) < 2 :
@@ -51,7 +56,7 @@ def search_results():
     mySQL=mySQL+orderBy
     cursor.execute(mySQL)
     results = cursor.fetchall()
-    return render_template('search_results.html', results=results)
+    return render_template('search_results_test_copy.html', results=results,storageAccount=storageAccount,containerName=containerName)
 
 if __name__ == '__main__':
     app.run(debug=True)
