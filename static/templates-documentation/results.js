@@ -1,3 +1,5 @@
+//DataTable is created, features responsive table, paging, ordering, and set length per page = 12. 
+//columDefs set columns width sizes, and keep it the same when tempty. 
 $(document).ready(function() {
   var table = $('#results-table').DataTable({ 
       dom: '<"search-justify"l>t<"center-justify"p>',
@@ -18,12 +20,14 @@ $(document).ready(function() {
       ]
     });
     
+    //Script calls upon department-filter selection menu.
+    //Based on the selection, it calls upon dataTables, column (8), department, and filters based on department. 
     $('#department-filter').on('change', function() {
       table.column(8).search(this.value).draw();
       table.page('first').draw('page');
     });
     
-    //On-click function to display child rows. 
+    //Script creates child rows, when clicking on a table row.
     $('#results-table tbody').on('click', 'tr', function() {
       var table = $('#results-table').DataTable();
       var row = table.row(this);
@@ -41,8 +45,7 @@ $(document).ready(function() {
       }
     });
 
-    //Add custom input for number of results
-
+    //Creates a format for child rows, variable username takes information from email, and used to check for profile pic. 
     function format(d) {
       var storageAccount = "testwebdbphotos";
       var containerName = "pics";
@@ -52,14 +55,20 @@ $(document).ready(function() {
       //var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
 
       // add the image element to the row
+
+      // variable imgElement is created, if the URL exists, it is assigned as image source, 
+      //on error checks for any errors, if so, it replaces it with the deafault image
       var imgElement;
       if (imgUrl) {
         imgElement = '<img src="' + imgUrl + '" width="100" onerror="this.onerror=null; this.src=\'/static/images/CSUDHdefaultl.jpg\'">';
       } else {
+
+      //If nothing is returned, the default image is used. 
         var defaultUrl = "images/CSUDHdefaultl.jpg";
         imgElement = '<img src="' + defaultUrl + '">';
       }
-      // Wrap the returned HTML in a parent container div with a class
+
+      // Wrap the returned HTML in a parent container div with a table class, putting information in a clean tabular format. 
     return '<div class="employee-details">' +
       '<div class="profile-image">' +
         imgElement +
@@ -81,7 +90,9 @@ $(document).ready(function() {
     }
   });
 
-// [0] Proflie, [1] Name, [2] First Name, [3] Last Name, [4] Phone, [5] Title, [6] Office, [7] Email Address, [8] Department, [9] Division
+// Sorting function, to create drop down a sort option, cases are assigned to proper columns.
+// Sorting is ordered on ascending order. 
+// Legend: [0] Proflie, [1] Name, [2] First Name, [3] Last Name, [4] Phone, [5] Title, [6] Office, [7] Email Address, [8] Department, [9] Division
 function sortTable() {
   var sortValue = $('#sort-dropdown').val();
   var columnIdx = -1;
@@ -107,6 +118,10 @@ function sortTable() {
   }
 }
 
+//Function to populate the dropdown menu in department-filter.
+//Pulls information from results-table, and places in departmentValues array, distinct values.
+//Cleaned values replaces ampersand with & symbol to properly search exact queries.
+//Departmentvalues is checked if value was already found, if not, adds the string. 
 function populateDepartmentFilter() {
   var departmentFilter = document.getElementById("department-filter");
   var departmentValues = [];
@@ -121,6 +136,9 @@ function populateDepartmentFilter() {
   };
   
   // Add the distinct department values to the department-filter select element
+  // Based on the length of DepartmentValues, text is created, option.value picks up from the departmentValues array. 
+  // optiontext, along with createTextNode is used to clean and replaces ampersands with &.
+  // option is then appended with optionext, which is then appended to the departmentFilter which fills it with distinct values.  
   for (var i = 0; i < departmentValues.length; i++) {
     var option = document.createElement("option");
     option.value = departmentValues[i];
@@ -130,5 +148,6 @@ function populateDepartmentFilter() {
   };
 }
 
+//Function is then called
 populateDepartmentFilter();
 
