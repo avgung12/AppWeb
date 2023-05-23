@@ -56,7 +56,8 @@
 <body>
         <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
           <h2 class="search-header">Faculty/Staff Directory</h2>
-          <img src="https://testwebdbphotos.blob.core.windows.net/pics/CSUDHlogo.png" alt="Search Icon" class="search-icon" width="175" height="35">
+          <!--img src="https://testwebdbphotos.blob.core.windows.net/pics/CSUDHlogo.png" alt="Search Icon" class="search-icon" width="175" height="35"-->
+          <img src="{{ url_for('static',filename='images/CSUDHlogol.png')}}" alt="Search Icon" class="search-icon" width="175" height="35">
           <input type="text" name="query" placeholder= " Search... "  style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
           <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">
             <option value="AllFields">All Fields</option>
@@ -87,7 +88,7 @@
 
       <div class="container">
         <p>CSUDH Employees: Please request changes by opening a ticket at:</p>
-        <a class="link-header" href="https://csudh.service-now.com/it?id=sc_cat_item&catalog=service&sys_id=23bc8a84131f9b406a8635528144b02f" target="_blank">ServiceNOW</a>
+        <a class="link-header" href="https://csudh.service-now.com/it?id=sc_cat_item&catalog=service&sys_id=23bc8a84131f9b406a8635528144b02f" target="_blank">ServiceNow</a>
       </div>
     </body>
 </html>

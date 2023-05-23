@@ -56,7 +56,7 @@ def search_results():
     mySQL=mySQL+orderBy
     cursor.execute(mySQL)
     results = cursor.fetchall()
-    return render_template('search_results_test_copy.html', results=results,storageAccount=storageAccount,containerName=containerName)
+    return render_template('search_results_profile.html', results=results,storageAccount=storageAccount,containerName=containerName)
 
 if __name__ == '__main__':
     app.run(debug=True)

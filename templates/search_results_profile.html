@@ -3,7 +3,6 @@
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
-  
     <title>Search Results</title>
     <style>
 
@@ -211,7 +210,7 @@
         {% for result in results %}
         <tr class="table-row" >
         {% if result[5] %}
-            {% set img_url = 'https://'+ storageAccount + '.blob.core.windows.net/'+ containerName +'/' + result[5].split('@')[0] + '.jpg' %}
+            {% set img_url = '/static/profiles/' + result[5].split('@')[0] + '.jpg' %}
         {%else%}
             {%set img_url = '/static/images/CSUDHdefaultl.jpg'%}
         {% endif %}    
@@ -280,7 +279,7 @@
     function format(d) {
       var email = d[7];
       var username = email.substring(0, email.indexOf("@"));
-      var imgUrl = "https://"+ "{{storageAccount}}" + ".blob.core.windows.net/"+ "{{containerName}}" + "/" + username + ".jpg";
+      var imgUrl = "/static/profiles/" + username + ".jpg";
       //var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
 
       // add the image element to the row
