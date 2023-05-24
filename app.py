@@ -45,18 +45,38 @@ def search_results():
     containerName="pics"
     table="ITSTAFF"
     orderBy=f"order by Name ASC"
+    
+    placeholders = []
+    conditions = []
+    
     if query == "*" or len(query) < 2 :
         #mySQL=f"SELECT * from dbo.{table}" 
-        mySQL=F"SELECT * from dbo.{table} where 1=2"
+        mySQL=f"SELECT * FROM dbo.{table} WHERE 1=2"
     elif search_by=="AllFields":
-        mySQL=f"SELECT * from dbo.{table} where name like \'%{query}%\' or firstname like \'%{query}%\' or lastname like \'%{query}%\' or phone like \'%{query}%\' or office like \'%{query}%\' or emailaddress like \'%{query}%\' or Departement like \'%{query}%\' or division like \'%{query}%\' or title like \'%{query}%\'"
-        #mySQL=f"SELECT * from dbo.{table} where name = '{query}\' or firstname = \'{query}\' or lastname = \'{query}\' or phone = \'{query}\' or office = \'{query}\' or emailaddress = \'{query}\' or Departement = \'{query}\' or division = \'{query}\' or title = \'{query}\'"
+        conditions = [
+        "name LIKE ?",
+        "firstname LIKE ?",
+        "lastname LIKE ?",
+        "phone LIKE ?",
+        "office LIKE ?",
+        "emailaddress LIKE ?",
+        "Departement LIKE ?",
+        "division LIKE ?",
+        "title LIKE ?"
+        ]
+        placeholders = ['%' + query + '%'] * len(conditions)
     else:
-        mySQL=f"SELECT * from dbo.{table} where {search_by} like \'%{query}%'"
-    mySQL=mySQL+orderBy
-    cursor.execute(mySQL)
+       conditions.append(f"{search_by} LIKE ?")
+       placeholders.append('%' + query + '%')
+       
+    if conditions:
+        where_clause = " OR ".join(conditions)
+        mySQL = f"SELECT * FROM dbo.{table} WHERE {where_clause}"
+        
+    mySQL+= " " + orderBy
+    cursor.execute(mySQL, placeholders)
     results = cursor.fetchall()
-    return render_template('search_results_profile.html', results=results,storageAccount=storageAccount,containerName=containerName)
+    return render_template('search_results_test_copy.html', results=results,storageAccount=storageAccount,containerName=containerName)
 
 if __name__ == '__main__':
     app.run(debug=True)
