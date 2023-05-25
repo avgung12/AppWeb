@@ -26,7 +26,7 @@ def connection():
 
 @app.route("/")
 def home():
-    return render_template("searchiframe_testcase_copy.html")
+    return render_template("searchiframe_hidejs.html")
 
 @app.route('/search_results', methods=['GET', 'POST'])
 def search_results():
@@ -76,7 +76,7 @@ def search_results():
     mySQL+= " " + orderBy
     cursor.execute(mySQL, placeholders)
     results = cursor.fetchall()
-    return render_template('search_results_test_copy_defaultimg.html', results=results,storageAccount=storageAccount,containerName=containerName)
+    return render_template('search_results_hidejs.html', results=results,storageAccount=storageAccount,containerName=containerName)
 
 if __name__ == '__main__':
     app.run(debug=True)

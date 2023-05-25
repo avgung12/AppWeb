@@ -3,9 +3,13 @@
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
-  
+
+
+  <!-- CSS Styling and Title-->
     <title>Search Results</title>
     <style>
+
+      /*Table design, no border, colors are set to a pattern of grey (odd) and white (even) */
 
         table {
             border-collapse: collapse;
@@ -49,6 +53,8 @@
           border: none;
         }
 
+      /*Datatables code, pagination design and button design, responsible for the color of each button, when clicked or hovered. */
+
         .dataTables_paginate {
           margin-top: 10px;
           margin-right: 130px;
@@ -83,6 +89,7 @@
           background-color: #333;
         }
 
+    /*DataTables, search bar is disabled, search bar is already available, datatables_length is disabled to not show x amount of results. */
         .dataTables_filter {
           display: none;
         }
@@ -91,6 +98,7 @@
           display: none;
         }
 
+    /*CSS desgin Employee details for hidden row for employees, profile image is set as a circular design, employee details are set as a table. */
         .employee-details {
           display: flex;
           align-items: center;
@@ -114,7 +122,8 @@
         .details strong {
           margin-right: 50px;
         }
-
+    
+      /*Hidden class to hide the First Name and Last Name from appearing in the table. */
         .hidden {
           display: none;
         }
@@ -123,6 +132,7 @@
           border: none;
         }
 
+    /*Options menu, Sort By and Filter by Department are placed on the top center. Dropdown bar is distanced from labels. */
         .option-menu {
           display: flex; 
           flex-direction: row;
@@ -143,6 +153,7 @@
           margin-top: -8px;
         }
 
+    /*Sets the table to be mobile friendly, allows scrolling with Phone Devices, and prevents overlap, via overflow*/
       #results-table{
         position: relative;
         justify-content: center;
@@ -154,6 +165,7 @@
        -webkit-overflow-scrolling: touch;
       }
 
+  /*.center-justify, responsible for placement regarding paging links centered */
       .center-justify {
         display: flex;
         justify-content: center;
@@ -161,21 +173,14 @@
         margin-top: 10px;
         margin-right: 60px;
       }
-      
-      .search-justify {
-        position: relative;
-        left: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        margin-right: 1480px;
-      }
+
     </style>
 </head>
 
+<!-- Prevents copying or highlighting elements within the frame-->
 <body ondragstart="return false" onselectstart="return false">
 
+<!-- Drop down menu for both Sort By and Filtered By Department-->
 <div class = "option-menu">
 <label for="sort-dropdown">Sort by:</label>
 <select id="sort-dropdown" onchange="sortTable()">
@@ -191,10 +196,11 @@
 </select>
 </div>
 
+<!-- Display table that loads results based on the search query from iFrame. Displays Profile, Name, Phone, Title, Office, Email Address, Department, Division (First and Last Name hidden)-->
 <table id="results-table" class = "display">
     <thead>
         <tr>
-          <th> Profile</th>
+            <th>Profile</th>
             <th>Name</th>
             <th class="hidden">First Name</th>
             <th class="hidden">Last Name</th>
@@ -207,86 +213,33 @@
         </tr>
     </thead>
     <tbody>
-      <!--results[]0:name 1:FirstName,2:LastName,3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
+      <!--For loop outputs results[]0:name 1:FirstName (hidden),2:LastName (hidden),3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
         {% for result in results %}
         <tr class="table-row" >
-        <td class="profile-cell"></td>
-        <td>{{ result[0] }}</td>
-        <td class="hidden">{{ result[1] }}</td> 
-        <td class="hidden">{{ result[2] }}</td>
-        <td>{{ result[3] }}</td>
-        <td>{{ result[7] }}</td>
-        <td>{{ result[4] }}</td>
-        <td>{{ result[5] }}</td>
-        <td>{{ result[6] }}</td>
-        <td>{{ result[8] }}</td>
+      <!-- Nested if statement checks for existing email, spliting the username from email, to check for existing pictures-->
+        {% if result[5] %}
+            {% set img_url = 'https://'+ storageAccount + '.blob.core.windows.net/'+ containerName +'/' + result[5].split('@')[0] + '.jpg' %}
+      <!-- If the is no resulting image, returns default image stored locally-->
+        {%else%}
+            {%set img_url = '/static/images/CSUDHdefaultl.jpg'%}
+        {% endif %}    
+        <td> <img src="{{ img_url }}" width="30" height="30" onerror="this.onerror=null; this.src='/static/images/CSUDHdefault.jpg';"></td>
+                <td>{{ result[0] }}</td>
+                <td class="hidden">{{ result[1] }}</td> 
+                <td class="hidden">{{ result[2] }}</td>
+                <td>{{ result[3] }}</td>
+                <td>{{ result[7] }}</td>
+                <td>{{ result[4] }}</td>
+                <td>{{ result[5] }}</td>
+                <td>{{ result[6] }}</td>
+                <td>{{ result[8] }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<div id="pagination-links"></div>
+<!-- Calls upon javascript (obfuscated)-->
+<script src="static/js/results_o.js"></script>
 
-<script src="static/results_o.js"></script>
-
-<script>
-  const tableRows = document.querySelectorAll('#results-table tbody tr');
-
-  // Function to preload the images
-  function preloadImages(urls) {
-    return Promise.all(urls.map(url => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = resolve;
-        img.src = url;
-      });
-    }));
-  }
-  
-  // Create an array to hold the image URLs
-  const imageUrls = [];
-  
-  // Iterate over each table row
-  tableRows.forEach((row) => {
-    // Get the email address from the corresponding td element
-    const emailTd = row.querySelector('td:nth-child(8)');
-    const emailAddress = emailTd.textContent.trim();
-  
-    // Extract the username from the email address
-    const username = emailAddress.split('@')[0];
-  
-    // Construct the image URL based on the username
-    const imageUrl = `https://testwebdbphotos.blob.core.windows.net/pics/${username}.jpg`;
-  
-    // Add the image URL to the array
-    imageUrls.push(imageUrl);
-  });
-  
-  // Preload the images
-  preloadImages(imageUrls)
-    .then(() => {
-      // All images have been preloaded successfully
-      // Append the images to the profile cells within the rows
-  
-      // Iterate over each table row
-      tableRows.forEach((row, index) => {
-        // Create the img element and set its attributes
-        const img = document.createElement('img');
-        img.src = imageUrls[index];
-        img.alt = 'https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg';
-        img.style.width = '30px';
-        img.style.height = '30px';
-  
-        // Add the image to the profile cell within the row
-        const profileCell = row.querySelector('.profile-cell');
-        profileCell.appendChild(img);
-      });
-    })
-    .catch((error) => {
-      // Error occurred while preloading the images
-      console.error('Error preloading images:', error);
-});
-</script>
 </body>
 </html>

@@ -54,9 +54,9 @@ $(document).ready(function() {
       // add the image element to the row
       var imgElement;
       if (imgUrl) {
-        imgElement = '<img src="' + imgUrl + '" width="100" onerror="this.onerror=null; this.src=\'/static/images/CSUDHdefaultl.jpg\'">';
+        imgElement = '<img src="' + imgUrl + '" width="100" onerror="this.onerror=null; this.src=\'/static/images/CSUDHdefault.jpg\'">';
       } else {
-        var defaultUrl = "images/CSUDHdefaultl.jpg";
+        var defaultUrl = "images/CSUDHdefault.jpg";
         imgElement = '<img src="' + defaultUrl + '">';
       }
       // Wrap the returned HTML in a parent container div with a class

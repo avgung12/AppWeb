@@ -210,100 +210,26 @@
       <!--results[]0:name 1:FirstName,2:LastName,3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
         {% for result in results %}
         <tr class="table-row" >
-        <td class="profile-cell"></td>
-        <td>{{ result[0] }}</td>
-        <td class="hidden">{{ result[1] }}</td> 
-        <td class="hidden">{{ result[2] }}</td>
-        <td>{{ result[3] }}</td>
-        <td>{{ result[7] }}</td>
-        <td>{{ result[4] }}</td>
-        <td>{{ result[5] }}</td>
-        <td>{{ result[6] }}</td>
-        <td>{{ result[8] }}</td>
+          <td>
+            <img id="img{{ loop.index }}" width="30" height="30" onerror="this.onerror=null; this.src='static/images/CSUDHdefault.jpg';">
+          </td>
+          <script src="static/jssrc/image-script.js" data-index="{{ loop.index }}" data-email="{{ result[5] }}"></script>
+          <td>{{ result[0] }}</td>
+          <td class="hidden">{{ result[1] }}</td> 
+          <td class="hidden">{{ result[2] }}</td>
+          <td>{{ result[3] }}</td>
+          <td>{{ result[7] }}</td>
+          <td>{{ result[4] }}</td>
+          <td>{{ result[5] }}</td>
+          <td>{{ result[6] }}</td>
+          <td>{{ result[8] }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <div id="pagination-links"></div>
+<script src="static/jssrc/results.js"></script>
 
-<script src="static/results_o.js"></script>
-
-<script>
-// Select all the table rows within the tbody
-const tableRows = document.querySelectorAll('#results-table tbody tr');
-
-// Function to preload the images
-function preloadImages(urls) {
-  return Promise.all(
-    urls.map((url) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img.src);
-        img.onerror = () => resolve("https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg");
-        img.src = url;
-      });
-    })
-  );
-}
-
-// Create an array to hold the image URLs
-const imageUrls = [];
-
-// Iterate over each table row
-tableRows.forEach((row) => {
-  // Get the email address from the corresponding td element
-  const emailTd = row.querySelector('td:nth-child(8)');
-  const emailAddress = emailTd.textContent.trim();
-
-  // Extract the username from the email address
-  const username = emailAddress.split('@')[0];
-
-  // Construct the image URL based on the username
-  const imageUrl = `https://testwebdbphotos.blob.core.windows.net/pics/${username}.jpg`;
-
-  // Add the image URL to the array
-  imageUrls.push(imageUrl);
-});
-
-// Preload the images
-preloadImages(imageUrls)
-  .then((loadedImageUrls) => {
-    // All images have been preloaded successfully
-    // Append the images to the profile cells within the rows
-
-    // Iterate over each table row
-    tableRows.forEach((row, index) => {
-      const imageUrl = loadedImageUrls[index];
-
-      // Create the img element and set its attributes
-      const img = document.createElement('img');
-      img.alt = 'Profile Image';
-      img.style.width = '50px';
-      img.style.height = '50px';
-
-      if (imageUrl !== "https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg") {
-        img.src = imageUrl;
-        // Add the image to the profile cell within the row
-        const profileCell = row.querySelector('.profile-cell');
-        profileCell.appendChild(img);
-      } else {
-        img.src = "https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg";
-        // Create a span element with the default image as its background
-        const defaultImageSpan = document.createElement('span');
-        defaultImageSpan.classList.add('default-image');
-        defaultImageSpan.style.backgroundImage = `url("https://testwebdbphotos.blob.core.windows.net/pics/CSUDHdefault.jpg")`;
-
-        // Add the default image span to the profile cell within the row
-        const profileCell = row.querySelector('.profile-cell');
-        profileCell.appendChild(defaultImageSpan);
-      }
-    });
-  })
-  .catch((error) => {
-    // Error occurred while preloading the images
-    console.error('Error preloading images:', error);
-  });
-</script>
 </body>
 </html>

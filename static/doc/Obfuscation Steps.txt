@@ -4,7 +4,7 @@ Step 1: Install the VS Code extension JSObfuscator.
 
 Step 2: Click on the file you want to obfuscate.
 
-Step 3: While on the file, go to "View", choose "Open View"
+Step 3: While on the file, go to "View", choose "Command Palette"
 
 Step 4: On the search bar type ">JSObfuscator: Obfuscate Current File"
 
