@@ -49,7 +49,9 @@ $(document).ready(function() {
       var email = d[7];
       var username = email.substring(0, email.indexOf("@"));
       var imgUrl = "https://" + storageAccount + ".blob.core.windows.net/" + containerName + "/" + username + ".jpg";
-      //var imgUrl = "https://testwebdbphotos.blob.core.windows.net/pics/" + username + ".jpg";
+      var connect = "?";
+      var sas = "si=OneWeek&spr=https&sv=2022-11-02&sr=c&sig=69q43gwrC7dDO48JccVxeQrhqy%2Bd8%2FJlCNl6Ob2nMxI%3D";
+      var imgUrl = imgUrl + connect + sas; 
 
       // add the image element to the row
       var imgElement;
