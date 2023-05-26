@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+  
+    <title>Search Results</title>
+    <style>
+
+        table {                             
+            border-collapse: collapse; /*remove borders from the table*/
+        }
+        th, td {
+            text-align: left; /* In each column align the text to the left*/
+            padding: 8px; /*spacing between text and the border by 8 pixels*/
+            border: 1px solid #ddd; /*border is 1px wide*/
+        }
+
+        th {
+            background-color: #f2f2f2; /*Color coding for both odd and even rows*/
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /*Colorcoding for even values*/
+        }
+        
+        tr:nth-child(odd) {
+          background-color: #ffffff;
+      }
+
+        .table-format {
+          background-color: #f9f9f9; /*Attempt the same format for child row table*/
+        }
+
+        .table-format tr:nth-child(odd){
+          background-color: #f9f9f9; 
+        }
+
+        .table-format tr:nth-child(even){
+          background-color: #f9f9f9;
+        }
+
+        table, th, td { /*Within each row and column of the table, there is no border*/
+          border: none;
+          border-collapse: collapse;
+        }
+
+        table.dataTable tbody th, table.dataTable tbody td {
+          border: none;         /*Remove the border from datatable row*/
+        }
+
+        .dataTables_paginate {
+          margin-top: 10px;     /*Unused property for datatables pagination */
+          margin-right: 130px;
+        }
+        .dataTables_paginate .paginate_button {  /*Designed to center the pagination links, and provide spacing between page links*/
+          display: inline-block;   
+          padding: 5px 10px;
+          border: 1px solid #ccc;
+          position: relative;        /*Position is relative to the DataTable, which is now placed below the table*/
+          left: 50px;
+          margin-right: 10px;
+          font-size: 14px;
+          color: #333;
+          background-color: #fff;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;  /*Design to implement smooth transitions when scrolling and properties change */
+          overflow-x: auto;
+        }
+        .dataTables_paginate .paginate_button:hover {
+          color: #fff;             /*Pagination button colors , and when they are hovered upon, they display set color*/
+          background-color: #333;
+        }
+        
+        .dataTables_paginate .paginate_button.disabled { /* When a pagination button is disabled, such as next, previous, or 1 , 2, 3 , opacity is slightly lowered*/
+          opacity: 0.5;    
+          cursor: default;
+        }
+        
+        .dataTables_paginate .paginate_button.current { /*The current page number is highlighted and colored black background and white color font*/ 
+          font-weight: bold;
+          color: #fff;
+          background-color: #333;
+        }
+
+        .dataTables_filter { /*Disable datatables_filter to hide the unused search bar, found on the top right*/
+          display: none;
+        }
+        
+        .dataTables_length{
+          display: none;     /*Disable datatables_length, to hide the "Show x results" button*/
+        }
+
+        .employee-details {  /*Design for child row details, to allow text to be inline, and text is aligned to the center*/
+          display: flex;
+          align-items: center;    /*Items are aligned to the center*/
+          border: 3px solid #ccc; /*Border set to 3 pixels within the child row*/
+          padding: 10px;  
+          margin-bottom: 10px;
+        }
+        
+        .profile-image {
+          margin-right: 20px; /*Profile image is moved slightly moved to the left by 20 pixels*/
+        }
+        
+        .profile-image img {
+          border-radius: 50%; /*Controls the size of the image displayed*/
+        }
+        
+        .details p {
+          margin: 25px 0;    /*Moves the detail headers to the left by 25 pixels*/
+        }
+        
+        .details strong {   /*Moves the detail information to closer to the detail headers by 50 pixels*/
+          margin-right: 50px;
+        }
+
+        .hidden {
+          display: none; /*Hidden class, to hide both First and Last Names within the table*/
+        }
+
+        .table-format{
+          border: none; /*Removes the border within the hidden row*/
+        }
+
+        .option-menu {        /*Moves selection menu: sort by and filter by department*/
+          display: flex; 
+          flex-direction: row;    /*Moves both option menus as a rwo*/
+          justify-content: center; /*Centers both sort by and filter by department*/ 
+          /*margin-right: 200px;*/   
+        }
+
+        select{
+          margin-left: 15px;  /*Moves the selection text slightly to the right*/
+          margin-right: 15px; /*Adjust the selection text slightly to the right*/
+          height: 20px;    /*Increases the selection bar height slightly 20 pixels up*/
+          width: 300px;     /*Increases width by 300 px*/
+          margin-top: -8px; /*Moves the selection bar 8 pixels up.*/
+        }
+
+        label{
+          /*margin-right: 20px;*/
+          margin-top: -8px; /*Moves the text label slightly upwards to align with selection bar*/
+        }
+
+      #results-table{
+        position: relative;
+        justify-content: center; /*Results table is placed to the center of the page, disable movement when zooming out*/
+        margin: 0 auto;
+        margin-top: 30px;
+        width: 100%;
+        white-space: nowrap;  /*Disables text wrapping for longer string information*/
+        overflow-x: auto;   /*Disables overlapping and overflowing text, allows horizontal scroll bars*/
+       -webkit-overflow-scrolling: touch; /*Allows scrolling via touch on mobile devices*/
+      }
+
+      .center-justify { /*Positioning for page links*/
+        display: flex;    
+        justify-content: center;  /*Centers the page links, which is placed on the bottom of the datatable*/
+        position: relative; /*Located relative to the DataTable*/
+        margin-top: 10px; /*Moved 10 pixels down the DataTabale*/
+        margin-right: 60px; /*Moves the page links slightly to the left*/
+      }
+      
+      .search-justify { /*Positioning for unused datatables_length*/
+        position: relative;  /*Position relative to the DataTable*/ 
+        left: 0;              
+        bottom: 0;
+        display: flex;      /*DataTables text and X results bar aligned */
+        justify-content: center; /*DataTables centered to prevent misalignment when zooming out*/
+        margin-top: 20px;
+        margin-right: 1480px; /*Positioned all the way to the left by 1480 pixles*/ 
+      }
+    </style>
+</head>
+
+<body ondragstart="return false" onselectstart="return false">
+
+
+<!-- Div Class for Sort Dropdown Menu and Filter by Department-->
+<div class = "option-menu">
+<label for="sort-dropdown">Sort by:</label>
+<select id="sort-dropdown" onchange="sortTable()"> <!-- When changing values, calls upon sortTable() found in the javascript results.js-->
+  <option value="first-name">Name</option> <!-- Sort by First Name ascending -->
+  <option value="office">Office</option> <!-- Sort by Office ascending -->
+  <option value="department">Department</option> <!-- Sort by Department ascending -->
+  <option value="division">Division</option> <!-- Sort by Division ascending -->
+</select>
+
+<label for="department-filter">Filter by Department:</label> <!--Selection menu for department-filter, filter by: -->
+<select id="department-filter">
+  <option value="">All</option> <!--Displays all departments, and following departments are loaded by populateDepartments(), found in results.js-->
+</select>
+</div>
+
+<table id="results-table" class = "display"> <!-- Table body, results-table, modified through DataTables-->
+    <thead>
+        <tr>
+          <th> Profile</th>  <!-- Profile category: profiles pictures-->
+            <th>Name</th>  <!-- Profile category: Names, Dispaly Names-->
+            <th class="hidden">First Name</th> <!-- Hiddenn Profile category: First Names, calls upon .hidden CSS format -->
+            <th class="hidden">Last Name</th> <!-- Hiddenn Profile category: Last Names, calls upon .hidden CSS format -->
+            <th>Phone</th> <!-- Profile category: Phone num-->
+            <th>Title</th> <!-- Profile category: Title-->
+            <th>Office</th> <!-- Profile category: Office-->
+            <th>Email Address</th> <!-- Profile category: Email Address-->
+            <th>Department</th> <!-- Profile category: Department--> 
+            <th>Division</th><!-- Profile category: Division-->
+        </tr>
+    </thead>
+    <tbody>
+      
+      <!-- Legend: results[]0:name 1:FirstName,2:LastName,3:Phone,4:Office,5:Email 6:Department,7:Title,8:Division(Company)-->
+        {% for result in results %} <!-- Checks is there are possible results in the search bar. -->
+        <tr class="table-row" >
+          <td>
+            <!-- Section for images, checks omage loop index-->
+            <img id="img{{ loop.index }}" width="30" height="30" onerror="this.onerror=null; this.src='static/images/CSUDHdefault.jpg';">
+          </td>
+          <!--Calls upon javascript image-script, and implement data-index and data-email variable to be used check and call upon user images based on user name.-->
+          <script src="static/js/image-script_o.js" data-index="{{ loop.index }}" data-email="{{ result[5] }}"></script>
+
+          <!-- Display Name -->
+          <td>{{ result[0] }}</td>
+
+          <!-- First Name (hidden)-->
+          <td class="hidden">{{ result[1] }}</td>
+
+          <!-- Last Name (hidden)-->
+          <td class="hidden">{{ result[2] }}</td>
+
+          <!-- Phone -->
+          <td>{{ result[3] }}</td>
+
+          <!-- Title -->
+          <td>{{ result[7] }}</td>
+
+          <!-- Office -->
+          <td>{{ result[4] }}</td>
+
+          <!-- Email Address-->
+          <td>{{ result[5] }}</td>
+
+          <!-- Department-->
+          <td>{{ result[6] }}</td>
+
+          <!-- Division-->
+          <td>{{ result[8] }}</td>
+            </tr>
+        {% endfor %} <!-- Ends for loop after displaying all information-->
+    </tbody>
+</table>
+
+<div id="pagination-links"></div>
+<script src="static/js/results_o.js"></script> <!-- Calls upon the obfuscated script, the javascript displays gibberish-->
+
+</body>
+</html>

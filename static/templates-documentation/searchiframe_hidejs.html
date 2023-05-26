@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSUDH Faculty & STAFF Phone Directory</title>
+    <style>
+      #search-form { /*Formats the entire seach bar and section of the page*/ 
+        text-align: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;  /*Completely takes the width of the entire page*/
+        height: 140px; /*Set height of 140px, takes 140 px of the page*/
+        z-index: 1;
+        background-color: white;
+        padding: 2px;
+        border-bottom: 1px solid black; 
+        background-color: #860038; /*Background color match CSUDH <div> bars*/
+      }
+      
+      iframe { /*Formats the iframne section of the page*/ 
+        width: 100%; /*Takes 100% of page width*/ 
+        height: calc(100vh - 240px);
+        border: none; /*No border to split seach section and frame*/
+        margin-top: 180px; /*Moves the frame 180px below the search bar*/ 
+      }
+      .search-icon { /*CSUDH Logo Icon*/
+        position: absolute; 
+        left: 35px; /*Moved to the top left corner, but slighty adjusted*/ 
+        top: 50px;
+      }
+      .search-header { /*Search header text for CSUDH, "Faculty/Staff Directory" */ 
+        font-family: 'ProxNova-Light', sans-serif; /*Default font for CSUDH*/
+        color: #ededed; /*Color smoke white for font*/
+        font-size: 45px;
+        font-weight: 700; /*Font thickness to 700*/
+        margin-top: 20px;  /*Top magin by 20px*/
+        margin-bottom: -15px; /*Bottom magrin by 15px*/ /*Top be placed above the search bar*/ 
+      }
+
+      .container { /*Container for Sarah's message for Employees*/ 
+        display: flex; /*Aligns text for both message, and URL Link*/
+        align-items: center; /*Centers the both messages and links*/ 
+        flex-direction: row;
+        font-family: 'ProxNova-Light', sans-serif; 
+        font-size: 14px; /*Set font size to 14 pixels*/
+        /*font-weight: bold;*/
+        justify-content: center;  /*Centers the both messages and links*/ 
+      }
+
+      .link-header{
+        margin-left: 5px;
+      }
+
+    </style>
+  </head>
+<body>
+        <!-- Create search form and targets to search_results_image-->
+        <form id="search-form" method="post" action="{{ url_for('search_results') }}" target="search_results_iframe">
+
+          <!-- Search header, above the search bar, "Faculty/Staff Directory"-->
+          <h2 class="search-header">Faculty/Staff Directory</h2>
+
+          <!-- CSUDH logo image sources, set height to 35px and width to 175 pixels-->
+          <img src="{{ url_for('static',filename='images/CSUDHlogo.png')}}" alt="Search Icon" class="search-icon" width="175" height="35">
+
+          <!-- Input text for search query, placeholder sets a place value "Search...", search bar is moved 30 pixels up, bar width is 300 pixels wide. 25px tall-->
+          <input type="text" name="query" placeholder= " Search... "  style="margin-top: 30px; width: 300px; line-height: 1.5; height:25px">
+
+          <!-- Dropdown menu for search query, sbar is moved 30 pixels up, bar width is 300 pixels wide. 30 pixels tall-->
+          <select name="search_by" style="margin-top: 30px; width: 300px; line-height: 1.5;height:30px">
+
+            <!--Dropdown menu options, dropdown option connects to Python SQL Queries in app.py-->
+            <option value="AllFields">All Fields</option> <!--Dropdown menu option: AllFields, will use user input to search in any category, connects to Python SQL Queries-->
+            <option value="name ">Name</option> <!--Dropdown menu options: Name, user input will be search through existing display names-->
+            <option value="firstname ">First Name</option> <!--Dropdown menu options: First Name, user input is searched through existing First Names-->
+            <option value="lastname ">Last Name</option> <!--Dropdown menu options: Last Name, user input is searched through existing Last Names-->
+            <option value="phone ">Phone</option> <!--Dropdown menu options: Phone, user input is searched through existing Phone number values-->
+            <option value="office ">Office</option> <!--Dropdown menu options: Office, user input is searched through existing Office building values-->
+            <option value="emailaddress ">Email Address</option> <!--Dropdown menu options: Email Address, user input is searched through existing Email Address values-->
+            <option value="Departement">Department</option> <!--Dropdown menu options: Department, user input is searched through Department values-->
+            <option value="title ">Title</option> <!--Dropdown menu options: Title, user input is searched through existing Titles-->
+            <option value="division ">Division</option> <!--Dropdown menu options: Division, user input is searched through existing Divisions-->
+          </select>
+          <input type="submit" value="Search" style="height: 30px;"> <!--Submission button-->
+        </form>
+      </div>
+      
+      <!-- Targetted iFrame to search_results_ifame, which the source is search_results, allows the being in the same origin, scripts and forms-->
+      <iframe name="search_results_iframe" id="search_results_iframe" src="{{ url_for('search_results') }}" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+      
+
+      <div class="container">
+        <!-- Message to all employees and link CSUDH service how, terget as "ServiceNOW."-->
+        <p>CSUDH Employees: Please request changes by opening a ticket at:</p>
+        <a class="link-header" href="https://csudh.service-now.com/it?id=sc_cat_item&catalog=service&sys_id=23bc8a84131f9b406a8635528144b02f" target="_blank">ServiceNOW</a>
+      </div>
+    </body>
+</html>
