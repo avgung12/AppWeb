@@ -51,7 +51,7 @@ def search_results():
     placeholders = [] ## placeholder are used to search queries. 
     conditions = [] ## holds the amount of conditions. 
     
-    if query == "*" or len(query) < 2 :   ##If the query length is less than 2, or an asterisk it will return empty. 
+    if query in "310-243" or len(query) < 2  :   ##If the query length is less than 2, or when the phone number does not return further substrings, it will return nothing. 
         #mySQL=f"SELECT * from dbo.{table}" 
         mySQL=f"SELECT * FROM dbo.{table} WHERE 1=2" 
     elif search_by=="AllFields":   ##Else, if the query length > 3 and All Fields are searched, it will list multiple conditions it can be searched by. 
@@ -61,29 +61,40 @@ def search_results():
         "lastname LIKE ?",
         "phone LIKE ?",
         "office LIKE ?",
-        "emailaddress LIKE ?",
+        "(LEFT(emailaddress, CHARINDEX('@', emailaddress) - 1) LIKE ?)", ##Checks to the left of the email address, to check for valid usernames, instead of allowing .edu.
+        "emailaddress LIKE ?", ##Allows to check emails if there is a viable email entered by the user. 
         "Departement LIKE ?",
         "division LIKE ?",
         "title LIKE ?"
         ]
-        placeholders = ['%' + query + '%'] * len(conditions) ##Placeholders in conjunction with conditions .
+        placeholders = ['%' + query + '%'] * (len(conditions)-1) ##Placeholders in conjunction with conditions .
                                                              ## Will query the amount of times, equal to the length of conditions, 
-                                                             ## Name LIKE %Bill%, firstname LIKE %BILL%, lastname LIKE %BILL%.......
+                                                             ## Name LIKE %Bill%, firstname LIKE %BILL%, lastname LIKE %BILL%...
+        placeholders.append(query)   
+          
+    elif search_by == "emailaddress ": ##Check to see if the user searches by email address.
+        conditions.append("LEFT(emailaddress, CHARINDEX('@', emailaddress) - 1) LIKE ? OR emailaddress = ?") ##Checks to the left of the email address, to check for valid usernames, instead of allowing .edu.
+                                                                ## OR It checks of the emailaddress is the exact string. 
+        placeholders.append('%' + query + '%') ##Adds to the query in addition with contacentation, allows for partial searching of emails.
+        placeholders.append(query) ##To search for exact email queries. 
+        
     else:
        conditions.append(f"{search_by} LIKE ?") ##On the other hand, if its not search by All Fields, it will be based on "search_by" 
        placeholders.append('%' + query + '%') ##The query will then be appended,  search by = Name, therefore f"{Name} Like ? '%' + Bill + '%'
        
     if conditions:
-        where_clause = " OR ".join(conditions) ##If there are existing conditions, then an "or" operator will be joined along the conditions    
+        where_clause = " OR ".join(conditions) ##If there are existing conditions, then an "OR" operator will be joined along the conditions    
                                                ## Name LIKE %Bill% OR  firstname LIKE %BILL% OR lastname LIKE %BILL%.
                                                
         mySQL = f"SELECT * FROM dbo.{table} WHERE {where_clause}" ##mySQL combines where_clause with table
-                                                                  ## THIS CREATES A PARAMETERIZED query, this not pure query. 
+                                                                  ## THIS CREATES A PARAMETERIZED query, instead of directly pure query. 
         
-    mySQL+= " " + orderBy      ##Concatenated with orderBy, will exucute search with conditions and orderBy string. 
+    mySQL+= " " + orderBy      ##Concatenated with orderBy, will exucute search with conditions and orderBy string, in this case, ordered by ASCENDING order. 
     cursor.execute(mySQL, placeholders) ##Example: "SELECT * FROM dbo.Persons WHERE Name like %Bill% or FirstName %Bill% order by Name ASC"
-    results = cursor.fetchall()
-    return render_template('search_results_hidejs.html', results=results,storageAccount=storageAccount,containerName=containerName)
+    results = cursor.fetchall() ##variable "results" fetches all results from the search query, and puts them in the template.
+    
+    ##Returns results, storageAccount and containerName are both parameters of the blob storage. 
+    return render_template('search_results_hidejs.html', results=results,storageAccount=storageAccount,containerName=containerName) 
 
 if __name__ == '__main__':
     app.run(debug=True)

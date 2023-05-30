@@ -9,9 +9,9 @@ $(document).ready(function() { //$ (document) refers to the <body> content of ht
     //Properties of the table. 
       dom: '<"search-justify"l>t<"center-justify"p>',  //dom varible controls the position and elements of the table (in this case, it follows a separate CSS files I created), 
       //length is above page links, table is in the middle, page link is at the bottom. 
-      "resonsive": true, //Responsive, set to true, the table automatically resizes based on string length, more string in a row, within a column, the column width automaticall adjusts.
+      "resonsive": true, //Responsive, set to true, the table automatically resizes based on string length, the more string in a row, within a column, the column width automatically adjusts.
       "paging": true, //Set to true, allows paging within the datatables.
-      "ordering": true, // Set to true, allows ordering with table column parameters ex.("order": [[ 3, "desc" ]]), It modifies the 4th column of the table order it by descending order, "asc" to ascending order, "desc to descending order"
+      "ordering": true, // Set to true, allows ordering with table column parameters. For ex.("order": [[ 3, "desc" ]]), It modifies the 4th column of the table order it by descending order, "asc" to ascending order, "desc to descending order"
       //It is used within the Sorting javascript function (lines 100-124)
 
       "info": false, //Set to false, it displays the current amount of results, to the total amount of results, ex. In page 2, it displays (30 out of 120 results)
@@ -35,9 +35,9 @@ $(document).ready(function() { //$ (document) refers to the <body> content of ht
     //Based on the selection, it calls upon dataTables, column (8), department, and filters based on department. 
 
     $('#department-filter').on('change', function() { //$ refers to the department-filter menu found in search_results.html, occurs when a value is changed within the element. 
-      //For example, I want to filter the department within the Police department, function (){}, searches by the value of 'Police department'
+      //For example, I want to filter the employees within the Police department, function (){}, searches by the value of 'Police department'
 
-      table.column(8).search(this.value).draw(); //table.column (8) calls column 8 of the table, and based on the value, it draws results. 
+      table.column(8).search(this.value).draw(); //table.column (8) calls column 8 (Department column) of the table, and based on the value, it draws results. 
       table.page('first').draw('page'); //The .page('first') function will move to the first page of the table , and will draw within the current page. 
     });
     
@@ -127,7 +127,7 @@ function sortTable() {  // Sorting function, to create drop down a sort option, 
     case "division": //should the value be division, it will sort in column 9, which is the Division columns
       columnIdx = 9;
       break;
-    case "department": //department, column 9, Department Column.
+    case "department": //department, column 8, Department Column.
       columnIdx = 8;
       break;
     case "first-name": //first-name, column 1, Name column.
@@ -140,7 +140,7 @@ function sortTable() {  // Sorting function, to create drop down a sort option, 
       columnIdx = 1;
   }
   if (columnIdx >= 1) {
-    $('#results-table').DataTable().order([columnIdx, 'asc']).draw(); // Sorting is ordered on ascending order. Any choice 
+    $('#results-table').DataTable().order([columnIdx, 'asc']).draw(); // Sorting is ordered on ascending order. Any choice that is above or is columnID 1. 
   }
 }
 
@@ -185,6 +185,6 @@ function populateDepartmentFilter() {  //Function to populate the dropdown menu 
   };
 }
 
-//Function is then called
+//Function is then called.
 populateDepartmentFilter();
 
